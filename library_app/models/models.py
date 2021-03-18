@@ -1,24 +1,3 @@
-from odoo import fields, models
-# импорт объектов модулей и полей
-
-
-class Book(models.Model): # новая модель
-	_name = 'library.book'
-    # атрибут _name, определяющий идентификатор,
-    # который будет использоваться повсюду Odoo для обозначения этой модели
-	_description = 'Book'
-    # атрибут модели _description обеспечивает
-    # удобное имя для записей модели, которое можно использовать для улучшения
-    # пользовательских сообщений. Остальные строки определяют поля модели.
-	name = fields.Char('Title', required=True)
-	isbn = fields.Char('ISBN')
-	active = fields.Boolean('Active?', default=True)
-	date_published = fields.Date()
-	image = fields.Binary('Cover')
-	publisher_id = fields.Many2one('res.partner', string='Publisher')
-	author_ids = fields.Many2many('res.partner', string='Authors')
-
-
 
 # from odoo import models, fields, api
 
