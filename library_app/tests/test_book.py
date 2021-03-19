@@ -1,7 +1,6 @@
 # noinspection PyUnresolvedReferences
 from odoo.tests.common import TransactionCase
 
-
 # TestCase, в котором каждый тестовый метод запускается в отдельной транзакции
 # и с собственным курсором. Транзакция откатывается, и курсор закрывается после
 # каждого теста.

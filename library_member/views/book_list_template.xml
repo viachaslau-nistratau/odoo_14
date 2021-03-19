@@ -1,0 +1,17 @@
+<odoo>
+    <template id="book_list_extended"
+        name="Extended Book List"
+        inherit_id="library_app.book_list_template">
+        <xpath expr="//span[@t-field='book.publisher_id']" position="after">
+            <t t-if="not book.is_available">
+                <b>(Not Available)</b>
+            </t>
+        </xpath>
+    </template>
+    <!--расширим шаблон library_app.book_list_template, чтобы показать дополнительную-->
+    <!--информацию о книгах, которых нет в наличии.-->
+    <!--Шаблоны веб-страниц представляют собой XML-документы, как и другие типы представлений-->
+    <!--Odoo, и мы можем использовать xpath для поиска элементов, а затем манипулировать ими,-->
+    <!--как мы могли бы с другими View видов. Унаследованный шаблон идентифицируется в-->
+    <!--элементе <template> с помощью атрибута inherit_id. -->
+</odoo>
