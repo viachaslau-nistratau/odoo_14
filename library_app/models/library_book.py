@@ -4,6 +4,7 @@ from odoo.exceptions import Warning
 
 # импорт объектов модулей и полей
 
+
 class Book(models.Model):
     """
     model book

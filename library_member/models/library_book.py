@@ -1,13 +1,13 @@
-
-from odoo import api, fields, models
+from odoo import fields, models, api
 
 
 class Book(models.Model):
     """
     model book
     """
-    _inherit = "library.book"
-    is_available = fields.Boolean('Is Available?')
+    _inherit = 'library.book'
+    is_available = fields.Boolean('Is Available?', readonly=False)
+
     isbn = fields.Char(help="Use a valid ISBN-13 or ISBN-10.")
     publisher_id = fields.Many2one(index=True)
 
@@ -15,7 +15,8 @@ class Book(models.Model):
     # современные 13-значные номера ISBN, но некоторые более старые названия
     # могут иметь 10-значный ISBN. расширим метод _check_isbn () также на проверку этих случаев.
 
-    def _check_isbn(self):
+    # @api.multi
+    def __check__isbn(self):
         self.ensure_one()
         digits = [int(x) for x in self.isbn if x.isdigit()]
         if len(digits) == 10:
@@ -24,7 +25,7 @@ class Book(models.Model):
             check = total % 11
             return digits[-1] == check
         else:
-            return super()._check_isbn()
+            return super().__check__isbn
 
     # определяем его снова и в какой - то момент можем использовать super() для вызова
     # существующей реализации метода. В нашем методе мы проверяем, является ли это

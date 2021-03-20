@@ -5,8 +5,11 @@ from odoo.addons.library_app.controllers.main import Books
 # фильтруя каталог книги только по доступным названиям. Чтобы расширить существующий контроллер,
 # нам нужно импортировать соответствующий объект, а затем реализовать метод с дополнительной логикой.
 
-class BooksExtended(Books):
 
+class BooksExtended(Books):
+    """
+    проверка доступности книги в библиотеке
+    """
     @http.route()
     def list(self, **kwargs):
         response = super().list(**kwargs)
@@ -15,6 +18,7 @@ class BooksExtended(Books):
             books = Book.search([('is_available', '=', True)])
             response.qcontext['books'] = books
         return response
+
 
 # Контроллер для расширения Books, был определен в library_app / controllers / main.py файл.
 # Поэтому мы будем импортировать его из odoo.addons.library_app.controllers.main.
