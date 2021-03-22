@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
-    <!-- стиль бумажной страницы, <header> - содержит кнопки действий-->
-    <!-- поле для ISBN книги и кнопка для проверки действителен ли ISBN-->
+    <!-- стиль бумажной страницы, <header> - содержит кнопки действий
+    поле для ISBN книги и кнопка для проверки действителен ли ISBN-->
     <record id="view_form_book" model="ir.ui.view">
         <field name="name">Book Form</field>
         <field name="model">library.book</field>

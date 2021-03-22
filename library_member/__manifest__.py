@@ -3,7 +3,6 @@
     'name': 'Library Members',
     'description': 'Manage people who will be able to borrow books.',
     'author': 'Daniel Reis',
-    'application': False,
 
     # Добавляем зависимость от дополнительного модуля, предоставив миксин Models: mail
     # нашему модулю расширения потребуется дополнительная почтовая зависимость.
@@ -18,4 +17,6 @@
         'views/library_menu.xml',
         'views/book.list.template.xml',
     ],
+    'application': True,
+    'installable': True,
 }
