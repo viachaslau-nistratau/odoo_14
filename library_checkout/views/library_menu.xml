@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.actions.act_window" id="action_library_checkout">
+            <field name="name">Checkouts</field>
+            <field name="res_model">library.checkout</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_library_checkout"
+              name="Checkout"
+              action="action_library_checkout"
+              parent="library_app.menu_library"
+        />
+    </data>
+</odoo>

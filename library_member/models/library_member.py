@@ -15,7 +15,7 @@ class Member(models.Model):
     card_number = fields.Char()
     partner_id = fields.Many2one(
         'res.partner',
-        delegat=True,
+        delegate=True,
         ondelete='cascade',
         required=True
     )

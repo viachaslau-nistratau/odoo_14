@@ -69,7 +69,7 @@ class Book(models.Model):
     # По умолчанию ожидается поле currency_id.
     price = fields.Monetary('Price', 'currency_id')
 
-    currency_id = fields.Many2one('res_currency')
+    currency_id = fields.Many2one('res.currency')
 
     # Date and time fields
     # Date (string) и Datetime(string) ожидают только текст строки как позиционный аргумент.
