@@ -1,0 +1,26 @@
+<odoo noupdate="1">
+    <record id="stage_10" model="library.checkout.stage">
+        <field name="name">Draft</field>
+        <field name="sequence">10</field>
+        <field name="state">new</field>
+    </record>
+    <!-- стадия запроса книги - новый-->
+    <record id="stage_20" model="library.checkout.stage">
+        <field name="name">Borrowed</field>
+        <field name="sequence">20</field>
+        <field name="state">open</field>
+    </record>
+    <!-- стадия запроса книги - на руках-->
+    <record id="stage_90" model="library.checkout.stage">
+        <field name="name">Completed</field>
+        <field name="sequence">90</field>
+        <field name="state">done</field>
+    </record>
+    <!-- стадия запроса книги - возвращена-->
+    <record id="stage_95" model="library.checkout.stage">
+        <field name="name">Cancelled</field>
+        <field name="sequence">95</field>
+        <field name="state">cancel</field>
+    </record>
+    <!-- стадия запроса книги - аннулировано-->
+</odoo>

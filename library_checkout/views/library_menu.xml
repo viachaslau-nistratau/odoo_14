@@ -6,7 +6,7 @@
             <field name="res_model">library.checkout</field>
             <field name="view_mode">tree,form</field>
         </record>
-
+<!--создание кнопок меню -->
         <menuitem id="menu_library_checkout"
               name="Checkout"
               action="action_library_checkout"
