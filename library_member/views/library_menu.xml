@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <odoo>
-    <record model="ir.action.act_window" id="action_library_member">
-        <field name="name">Library Members</field>
-        <field name="res.model">library.member</field>
+    <record model="ir.actions.act_window" id="action_library_member">
+        <field name="name">Library members</field>
+        <field name="res_model">library.member</field>
         <field name="view_mode">tree,form</field>
     </record>
 <!--создание кнопок меню-->
     <menuitem id="menu_library_member"
               name="Members"
               action="action_library_member"
-              parents="library_app.menu_library"
+              parent="library_app.menu_library"
     />
 </odoo>

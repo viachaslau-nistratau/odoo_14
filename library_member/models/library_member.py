@@ -5,7 +5,7 @@ class Member(models.Model):
     """
     пользователи библиотеки
     """
-    _name = 'library_member'
+    _name = 'library.member'
     _description = 'Library Member'
     # наследование от классов миксинов выполняется с помощью _inherit атрибута.
     # надо сделать так, чтобы класс унаследовал mail.thread

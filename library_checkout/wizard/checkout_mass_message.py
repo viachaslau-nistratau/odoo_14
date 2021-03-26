@@ -29,8 +29,6 @@ class CheckoutMassMessage(models.TransientModel):
 
 
     # @api.multi
-
-
     def button_send(self):
         """
         кнопка отправки сообщения

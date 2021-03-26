@@ -11,7 +11,8 @@ class Checkout(models.Model):
     _inherit = ['mail.thread', 'mail.activity']
 
     member_id = fields.Many2one(
-        'library.member',
+        comodel_name='library.member',
+        string='Member',
         required=True)
     user_id = fields.Many2one(
         'res.users',

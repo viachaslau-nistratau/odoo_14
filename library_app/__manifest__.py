@@ -14,12 +14,12 @@
 		'views/book_view.xml',
 		'views/book_category_view.xml',
 		'views/book_list_template.xml',
-    ],
+	],
 
 	'demo': [
-        'data/res_partner.csv',
-        'data/library_book.csv',
-        'data/book_demo.xml',
+		'data/res_partner.csv',
+		'data/library_book.csv',
+		'data/book_demo.xml',
 	],
 
 	'installable': True,
