@@ -14,7 +14,7 @@ class CheckoutMassMessage(models.TransientModel):
         'library.checkout',
         string='Checkouts')
     message_subject = fields.Char()
-    message_body = fields.Html()
+    message_body = fields.Html()\
 
 
     @api.model
@@ -28,12 +28,11 @@ class CheckoutMassMessage(models.TransientModel):
         return defaults
 
 
-    # @api.multi
     def button_send(self):
         """
         кнопка отправки сообщения
         """
-        # import pudb;pu.db
+        import pdb; pdb.set_trace()
         self.ensure_one()
     # нет никакого смысла запускать логику отправки сообщений,
     # если не был выбран документ проверки. И нет смысла отправлять
