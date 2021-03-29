@@ -25,13 +25,15 @@ class TestWizard(TransactionCase):
     def test_button_send(self):
         """Send button should create messages on Checkouts"""
         # Add test code
-        msgs_before = len(self.checkout0.message_ids)
 
+        msgs_before = len(self.checkout.message_ids)
+        # msgs_before = len(self.checkout0.message_ids)
         wizard0 = self.wizard.with_context(active_ids=self.checkout0.ids)
         wizard0 = wizard0.create({'message_body': 'Hello'})
         wizard0.button_send()
 
-        msgs_after = len(self.checkout0.message_ids)
+        msgs_after = len(self.checkout.message_ids)
+        # msgs_after = len(self.checkout0.message_ids)
         self.assertEqual(
             msgs_after,
             msgs_before + 1,

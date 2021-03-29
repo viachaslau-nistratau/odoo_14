@@ -8,6 +8,8 @@ class CheckoutStage(models.Model):
     _name = 'library.checkout.stage'
     _description = 'Checkout Stage'
     _order = 'sequence,name'
+
+    # name = fields.Char(translation=True)
     name = fields.Char()
     sequence = fields.Integer(default=10)
     fold = fields.Boolean()

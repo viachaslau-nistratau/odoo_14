@@ -4,13 +4,31 @@
         <record model="ir.actions.act_window" id="action_library_checkout">
             <field name="name">Checkouts</field>
             <field name="res_model">library.checkout</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,activity,calendar,graph,pivot</field>
         </record>
-<!--создание кнопок меню -->
+<!--        <act_window id="action_library_checkout"-->
+<!--                    name="Checkout"-->
+<!--                    res_model="library.checkout"-->
+<!--                    view_mode="tree,form,activity,calendar,graph,pivot"-->
+<!--        />-->
+    <!--создание кнопок меню -->
         <menuitem id="menu_library_checkout"
               name="Checkout"
               action="action_library_checkout"
               parent="library_app.menu_library"
         />
+
+        <act_window id="action_library_stage"
+                    name="Checkout Stages"
+                    res_model="library.checkout.stage"
+                    view_mode="tree,form"
+        />
+        <menuitem id="menu_library_stage"
+                  name="Checkout stages"
+                  action="action_library_stage"
+                  parent="library_app.menu_library"
+        />
+
     </data>
+
 </odoo>

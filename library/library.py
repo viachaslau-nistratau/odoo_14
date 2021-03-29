@@ -1,7 +1,6 @@
 from argparse import ArgumentParser
 from library_api import LibraryAPI
 
-
 # код для добавления ist', 'add', 'set', 'del в синтаксический
 # анализатор командной строки
 parser = ArgumentParser()
@@ -49,6 +48,6 @@ if args.command == 'del':
     """
     реализация для команды del, которая должна удалить запись Book
     """
-    for param in args.params:
-        api.unlink(int(param))
-        print('Book with ID %s deleted.' % param)
+for param in args.params:
+    api.unlink(int(param))
+    print('Book with ID %s deleted.' % param)

@@ -1,6 +1,81 @@
 <?xml version="1.0"?>
 <odoo>
 
+    <record id="view_form_checkout" model="ir.ui.view">
+        <field name="name">Checkout Form</field>
+        <field name="model">library.checkout</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" invisible="True"/>
+                    <button name="button_done"
+                            type="'object"
+                            string="Returm Books"
+                            states="open,cancel"
+                            class="oe_highlight"
+                    />
+                            <!--attrs="{'invisible':
+                                [('state', 'in', ['new','done'])]}"-->
+<!--                    <field name="state" invisible="True"/>-->
+<!--                    <button name="do_clear_done"-->
+<!--                            type="object"-->
+<!--                            string="Clear Done"-->
+<!--                            status="open,cancel"-->
+<!--                            class="oe_highlight"-->
+<!--                    />-->
+                    <!--добавим в заголовок виджет строки состояния,
+                    показывающий, на каком этапе находится документ. это элемент
+                    <field> для поля stage_id, использующего виджет строки
+                    состояния (statusbar)-->
+                    <field name="stage_id"
+                           widget="statusbar"
+                           clicable="True"
+                           options="{'fold_field':'fold'}"
+                    />
+                    <field name="state" invisible="True" />
+                </header>
+                <sheet>
+                    <!--<field name="member_image" widget="image" class="oe_avatar"/>-->
+                    <div class="oe_title">
+                        <label for="member_id" class="oe_edit_only"/>
+                        <h1>
+                            <field name="member_id"/>
+                        </h1>
+                        <h3>
+                            <span class="oe_read_only">By</span>
+                            <label for="request_date" class="oe_edit_only"/>
+                            <field name="request_date" class="oe_inline"/>
+                        </h3>
+                    </div>
+                    <group name="group_top">
+                        <group name="group_col1">
+                            <field name="user_id"/>
+                            <field name="checkout_date"/>
+                        </group>
+<!--                        <group name="group_col2">-->
+<!--                            <field name="state"/>-->
+<!--                            <field name="closed_date"-->
+<!--                                   attrs="{'invisible':[('state', 'in', ['new','open'])]}"-->
+<!--                            />-->
+<!--                        </group>-->
+                    </group>
+                    <!--добавим элемент записной книжки в форму оформления заказа
+                    со списком заимствованных книг.-->
+                    <notebook>
+                        <page string="Borrowed Books" name="page_lines">
+                            <field name="line_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <!--<field name="activity_ids" widget="mail_activity"/>-->
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
     <record id="view_tree_checkout" model="ir.ui.view">
         <field name="name">Checkout Tree</field>
         <field name="model">library.checkout</field>
@@ -8,25 +83,21 @@
             <tree>
                 <field name="request_date"/>
                 <field name="member_id"/>
+                <field name="checkout_date"/>
+                <field name="stage_id"/>
             </tree>
         </field>
     </record>
 
-    <record id="view_form_checkout" model="ir.ui.view">
-        <field name="name">Checkout Form</field>
-        <field name="model">library.checkout</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="member_id"/>
-                        <field name="request_date"/>
-                        <field name="user_id"/>
-                        <field name="line_ids"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
 </odoo>
+
+<!--                <sheet>-->
+<!--                    <group>-->
+<!--                        <field name="member_id"/>-->
+<!--                        <field name="request_date"/>-->
+<!--                        <field name="checkout_date"/>-->
+<!--                        <field name="stage_id"/>-->
+<!--                        &lt;!&ndash;<field name="user_id"/>&ndash;&gt;-->
+<!--                        &lt;!&ndash;<field name="line_ids"/>&ndash;&gt;-->
+<!--                    </group>-->
+<!--                </sheet>-->
