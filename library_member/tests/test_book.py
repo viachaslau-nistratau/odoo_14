@@ -7,8 +7,8 @@ class TestBook(TransactionCase):
         """
         check valid ISBN10
         """
-        Book = self.env['library.book']
-        book = Book.create({
+        book = self.env['library.book']
+        book = book.create({
             'name': 'The Pythons: Autobiography by the Pythons',
             'isbn': '0312311443',
         })

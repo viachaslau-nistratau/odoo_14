@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <odoo>
-    <record id="view_form_categ" model="ir.ui.view">
+    <record id="view_form_category" model="ir.ui.view">
         <field name="name">Book Category Form</field>
         <field name="model">library.book.category</field>
         <field name="arch" type="xml">

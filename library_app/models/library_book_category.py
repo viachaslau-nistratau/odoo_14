@@ -17,7 +17,7 @@ class BookCategory(models.Model):
     parent_id = fields.Many2one(
         'library.book.category',
         'Parent Category',
-        ondelete='restrict'
+        ondelete='restrict',
     )
 
     # вспомогательное поле parent_path, должно быть проиндексировано,
@@ -29,7 +29,8 @@ class BookCategory(models.Model):
     child_ids = fields.One2many(
         'library.book.category',
         'parent_id',
-        'Subcategories')
+        'Subcategories',
+    )
 
     # добавление ссылки на выделенную книгу или автора.
     # поле может относиться либо к книге, либо к партнеру

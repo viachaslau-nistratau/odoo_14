@@ -27,7 +27,6 @@ class CheckoutMassMessage(models.TransientModel):
         defaults['checkout_ids'] = checkout_ids
         return defaults
 
-
     def button_send(self):
         """
         кнопка отправки сообщения
@@ -36,7 +35,8 @@ class CheckoutMassMessage(models.TransientModel):
         self.ensure_one()
     # нет никакого смысла запускать логику отправки сообщений,
     # если не был выбран документ проверки. И нет смысла отправлять
-    # сообщения без тела сообщения. Предупреждаем user, если что-то из этого произойдет.
+    # сообщения без тела сообщения. Предупреждаем user, если что-то из
+    # этого произойдет.
 
         if not self.checkout_ids:
             raise exceptions.UserError(

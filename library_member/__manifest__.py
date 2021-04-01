@@ -4,7 +4,8 @@
     'description': 'Manage people who will be able to borrow books.',
     'author': 'Daniel Reis',
 
-    # Добавляем зависимость от дополнительного модуля, предоставив миксин Models: mail
+    # Добавляем зависимость от дополнительного модуля, предоставив миксин
+    # Models: mail
     # нашему модулю расширения потребуется дополнительная почтовая зависимость.
 
     'depends': ['library_app', 'mail'],

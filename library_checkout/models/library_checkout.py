@@ -8,22 +8,14 @@ class Checkout(models.Model):
     _name = 'library.checkout'
     _description = 'Checkout Request'
     # наследование от абстрактных моделей миксинов
-    _inherit = ['mail.thread', 'mail.activity']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    member_id = fields.Many2one(
-        comodel_name='library.member',
-        string='Member',
-        required=True)
-    user_id = fields.Many2one(
-        'res.users',
-        string='Librarian',
-        default=lambda s: s.env.uid)
-    request_date = fields.Date(
-        default=lambda s: fields.Date.today())
-    line_ids = fields.One2many(
-        'library.checkout.line',
-        'checkout_id',
-        string='Borrowed Books', )
+    def name_get(self):
+        names = []
+        for rec in self:
+            name = '%s/%s' % (rec.member_id, rec.request_date)
+            names.append((rec.id, name))
+        return names
 
     """
     иногда необходимо, чтобы метод работал на уровне класса, а не с
@@ -35,7 +27,6 @@ class Checkout(models.Model):
 
     @api.model
     def _default_stage(self):
-
         stage = self.env['library.checkout.stage']
         return stage.search([], limit=1)
 
@@ -45,6 +36,24 @@ class Checkout(models.Model):
     @api.model
     def _group_expand_stage_id(self, stages, order):
         return stages.search([], order=order)
+
+    member_id = fields.Many2one(
+        comodel_name='library.member',
+        string='Member',
+        required=True,
+    )
+    user_id = fields.Many2one(
+        'res.users',
+        string='Librarian',
+        default=lambda s: s.env.uid,
+    )
+    request_date = fields.Date(
+        default=lambda s: fields.Date.today())
+    line_ids = fields.One2many(
+        'library.checkout.line',
+        'checkout_id',
+        string='Borrowed Books',
+    )
 
     # модель этапов запроса книг.
     # Значение стадии по умолчанию вычисляется вспомогательной функцией
@@ -58,18 +67,25 @@ class Checkout(models.Model):
     # мы хотели бы видеть все доступные этапы, даже если на них нет документов.
     # Вспомогательная функция _group_expand_stage_id () возвращает список
     # записей группы, которые должна использовать операция группировки.
+
     stage_id = fields.Many2one(
         'library.checkout.stage',
         default=_default_stage,
-        group_expand='_group_expand_stage_id')
+        group_expand='_group_expand_stage_id',
+    )
+
     # поле состояния. Это связанное (related) поле, которое
     # просто делает доступным поле (state) состояния стадии в этой модели
+
     state = fields.Selection(related='stage_id.state')
 
     # добавим два поля даты, чтобы записывать, когда проверка перешла
     # в открытое состояние и когда она перешла в закрытое состояние.
-    checkout_date = fields.Date(readonly=True)
-    close_date = fields.Date(readonly=True)
+
+    # checkout_date = fields.Date(readonly=True)
+    # closed_date = fields.Date(readonly=True)
+    checkout_date = fields.Date()
+    closed_date = fields.Date()
 
     # автоматизации в форме оформления заказа - когда абонент библиотеки
     # изменяется, дата запроса устанавливается на сегодняшний день, и
@@ -94,12 +110,21 @@ class Checkout(models.Model):
             return {
                 'warning': {
                     'title': 'Changed Request Date',
-                    'message': 'request date changed to today.', }
-                    }
+                    'message': 'request date changed to today.',
+                }
+            }
 
     # создаем собственный метод create (), чтобы установить checkout_date,
     # если он находится в соответствующем состоянии, и предотвратить создание
     # проверок в состоянии «Готово»
+    # При использовании Python 3 доступен упрощенный способ использования
+    # super()
+    # В Python 2 мы бы написали super (Checkout, self) .create (vals),
+    # где checkout - имя класса Python, в котором мы находимся.
+    # Это все еще действующий синтаксис для Python 3, но у нас также есть новый
+    # упрощенный синтаксис: super (). create (vals).
+    # new_record = super(Checkout, self).create(vals)
+
         @api.model
         def create(self, vals):
             """
@@ -110,21 +135,11 @@ class Checkout(models.Model):
                 new_state = stage.browse(vals['stage_id']).state
                 if new_state == 'open':
                     vals['checkout_date'] = fields.Date.today
-
-    # При использовании Python 3 доступен упрощенный способ использования
-    # super()
-    # В Python 2 мы бы написали super (Checkout, self) .create (vals),
-    # где checkout - имя класса Python, в котором мы находимся.
-    # Это все еще действующий синтаксис для Python 3, но у нас также есть новый
-    # упрощенный синтаксис: super (). create (vals).
-    # new_record = super(Checkout, self).create(vals)
-
             new_record = super().create(vals)
             # Code after create: can use the `new_record` created
             if new_record.state == 'done':
                 raise exceptions.UserError(
-                'Not allowed to create a checkout in the done state.'
-                )
+                    'Not allowed to create a checkout in the done state.')
             return new_record
 
     # специальный метод для выполнения некоторых действий с набором записей
@@ -188,5 +203,6 @@ class CheckoutLine(models.Model):
     """
     _name = 'library.checkout.line'
     _description = 'Borrow Request Line'
+
     checkout_id = fields.Many2one('library.checkout')
     book_id = fields.Many2one('library.book')

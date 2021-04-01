@@ -6,7 +6,7 @@ from odoo.tests.common import TransactionCase
 # каждого теста.
 # ref(xid)
 # Возвращает идентификатор базы данных для предоставленного
-# внешнего идентификатора , ярлык дляget_object_reference
+# внешнего идентификатора , ярлык для get_object_reference
 
 
 class TestBook(TransactionCase):
@@ -18,13 +18,13 @@ class TestBook(TransactionCase):
 		"""
 		результат создания новой книги для теста
 		"""
-		result = super().setUp(*args, **kwargs)
+		result = super().set_up(*args, **kwargs)
 		user_admin = self.env.ref('base.user_admin')
 		self.env = self.env(user=user_admin)
 		self.Book = self.env['library.book']
 		self.book_ode = self.Book.create({
 			'name': 'Odoo Development Essentials',
-			'isbn': '879-1-78439-279-6'
+			'isbn': '879-1-78439-279-6',
 		})
 		return result
 
@@ -32,9 +32,7 @@ class TestBook(TransactionCase):
 		"""
 		Test Books are active by default
 		"""
-		self.assertEqual(
-			self.book_ode.active, True
-		)
+		self.assertEqual(self.book_ode.active, True)
 
 	def test_check_isbn(self):
 		"""

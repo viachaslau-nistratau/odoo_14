@@ -7,7 +7,7 @@
     </record>
 <!--создание кнопок меню-->
     <menuitem id="menu_library_member"
-              name="Members"
+              name="АБОНЕНТЫ БИБЛИОТЕКИ"
               action="action_library_member"
               parent="library_app.menu_library"
     />
