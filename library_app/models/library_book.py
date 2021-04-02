@@ -176,6 +176,20 @@ class Book(models.Model):
     name_author_date = fields.Char(string='Автор/Название книги/Год издания',
                                    compute='_compute_name_author',)
 
+    @api.depends('author_ids.name')
+    def _compute_name_author(self):
+        for book in self:
+            name_book = book.name
+            author = book.author_ids.name
+            # year = book.date_published
+            if book.date_published:
+                year = book.date_published.strftime("%Y")
+            else:
+                year = 'Год издания не известен'
+            book.name_author_date = f'{author} - {name_book} ({year})'
+
+
+
     # @api.depends('date_published')
     # def _compute_change_date(self):
     #     for book in self:
@@ -194,18 +208,6 @@ class Book(models.Model):
     #         else:
     #             year = 'Год издания не известен'
     #         book.name_author_date = f'{author} - {name_book} ({year})'
-
-    @api.depends('author_ids.name')
-    def _compute_name_author(self):
-        for book in self:
-            name_book = book.name
-            author = book.author_ids.name
-            # year = book.date_published
-            if book.date_published:
-                year = book.date_published.strftime("%Y")
-            else:
-                year = 'Год издания не известен'
-            book.name_author_date = f'{author} - {name_book} ({year})'
 
     # @ api.depends (fld1, ...) используется для вычисляемых функций поля,
     # чтобы определить, при каких изменениях (повторное) вычисление должно

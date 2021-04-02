@@ -10,8 +10,15 @@
                 <header>
                     <button name="button_check_isbn"
                             type="object"
-                            string="Check ISBN"
+                            string="Проверка ISBN"
                     />
+<!--                    <field name="name_author_date" invisible="True"/>-->
+<!--                    <button name="button_view"-->
+<!--                            type="object"-->
+<!--                            string="view_record"-->
+<!--                            attrs="{'invisible': [('name_author_date', 'in', ['new', 'done'])]}"-->
+<!--                            class="o_event_hightlight"-->
+<!--                    />-->
                 </header>
                 <sheet>
                     <group name="group_top">
@@ -19,7 +26,9 @@
                             <field name="name"/>
                             <field name="author_ids"
                                    widget="many2many_tags"/>
-                            <field name="name_author_date"/>
+                            <field name="name_author_date" invisible="True"/>
+                            <!--<field name="name_author_date"
+                                   attrs="{'invisible':[('use_add_info', '=', ['False', 'True'])]}"/>-->
                             <field name="publisher_id"/>
                             <field name="date_published"/>
                             <field name="book_type"/>

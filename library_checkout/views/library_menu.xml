@@ -4,8 +4,8 @@
         <record model="ir.actions.act_window" id="action_library_checkout">
             <field name="name">Checkouts</field>
             <field name="res_model">library.checkout</field>
-            <field name="view_mode">tree,form</field>
-            <!--<field name="view_mode">tree,form,activity,calendar,graph,pivot</field>-->
+            <!--<field name="view_mode">tree,form</field>-->
+            <field name="view_mode">tree,form,activity,calendar,graph,pivot</field>
         </record>
 <!--        <act_window id="action_library_checkout"-->
 <!--                    name="Checkout"-->

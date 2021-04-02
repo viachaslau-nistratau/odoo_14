@@ -181,6 +181,28 @@ class Checkout(models.Model):
     # сделаем изображение абонента библиотеки доступным в документе оформления
     # заказа
     # member_image = fields.Binary(related='member_id.partner_id.image')
+    num_other_checkouts = fields.Integer(
+        compute='_compute_num_other_checkouts'
+    )
+
+    def _compute_num_other_checkouts(self):
+        for rec in self:
+            domain = [
+                ('member_id', '=', self.member_id.id),
+                ('state', 'in', ['open']),
+                ('id', '!=', rec.id)]
+            return self.search_count(domain)
+
+    num_books = fields.Integer(
+        compute='_compute_num_books',
+        store=True)
+
+    @api.depends('line_ids')
+    def _compute_num_books(self):
+        for book in self:
+            book.num_books = len(book.line_ids)
+
+
 
     def button_done(self):
         """
