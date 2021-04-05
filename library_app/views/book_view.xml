@@ -12,13 +12,6 @@
                             type="object"
                             string="Проверка ISBN"
                     />
-<!--                    <field name="name_author_date" invisible="True"/>-->
-<!--                    <button name="button_view"-->
-<!--                            type="object"-->
-<!--                            string="view_record"-->
-<!--                            attrs="{'invisible': [('name_author_date', 'in', ['new', 'done'])]}"-->
-<!--                            class="o_event_hightlight"-->
-<!--                    />-->
                 </header>
                 <sheet>
                     <group name="group_top">
@@ -26,12 +19,16 @@
                             <field name="name"/>
                             <field name="author_ids"
                                    widget="many2many_tags"/>
-                            <field name="name_author_date" invisible="True"/>
-                            <!--<field name="name_author_date"
-                                   attrs="{'invisible':[('use_add_info', '=', ['False', 'True'])]}"/>-->
+                            <!--кнопка вызова доп.инфрмации-->
+                            <field name="check_button"/>
+                            <!--реализация вызова инфы из поля add_info (видимое/невидимое)-->
+                            <field name="add_info" attrs="{'invisible':[('check_button','=',False)]}"/>
                             <field name="publisher_id"/>
                             <field name="date_published"/>
+                            <field name="book_genre"/>
                             <field name="book_type"/>
+                            <field name="shot_information" widget="radio"/>
+                            <field name="notes" attrs="{'invisible':[('shot_information','=',False)]}"/>
                         </group>
                         <group name="group_right">
                             <field name="isbn" />
@@ -56,6 +53,7 @@
 				<field name="publisher_id" />
 				<field name="date_published"/>
                 <field name="book_type"/>
+                <field name="book_genre"/>
 			</tree>
 		</field>
     </record>

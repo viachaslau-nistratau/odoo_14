@@ -30,14 +30,14 @@ class Book(models.Model):
     # использование аргументов ключевого слова для атрибутов поля:
 
     name = fields.Char(
-        'Название книги',
-        default=None,
-        index=True,
-        help='Book cover title',
-        readonly=False,
-        required=True,
-        translate=False,
-    )
+        'Название книги',)
+    #     default=None,
+    #     index=True,
+    #     help='Book cover title',
+    #     readonly=False,
+    #     required=True,
+    #     translate=False,
+    # )
 
     # String fields: name = fields.Char('Title')
     # Char (string) - это одна строка текста.
@@ -57,12 +57,8 @@ class Book(models.Model):
          ('hard', 'твердый переплет'),
          ('electronic', 'электронная книга'),
          ('other', 'прочее')],
-        'Type',
+        'Тип',
     )
-    # Text многострочный текст. Единственный позиционный аргумент - это строка,
-    # метка поля
-
-    notes = fields.Text('Internal Notes')
 
     # Html хранится как текстовое поле, но имеет специфическую обработку
     # пользователя интерфейса для представления содержимого HTML
@@ -92,7 +88,6 @@ class Book(models.Model):
     # Date and time fields
     # Date (string) и Datetime(string) ожидают только текст строки как
     # позиционный аргумент.
-
     # вычисление значения по умолчанию с текущими датой и временем:
 
     last_borrow_date = fields.Datetime(
@@ -127,6 +122,101 @@ class Book(models.Model):
 
     author_ids = fields.Many2many('res.partner', string='Автор/Авторы')
 
+    category_id = fields.Many2one('library.book.category', string='Категория')
+
+    #  чтобы страна издателя была в книжной форме.
+    # дя этого используем вычисляемое поле на основе publisher_id,
+    # значение которого будет принимать значение из поля country_id издателя.
+
+    publisher_country_id = fields.Many2one(
+        'res.country', string='Publisher Country',
+        compute='_compute_publisher_country',
+        # store = False, # Default is not to store in db
+        # функция поиска для реализации логики поиска и
+        # обратная функция для реализации логики записи.
+        inverse='_inverse_publisher_country',
+        search='_search_publisher_country',
+    )
+
+    # жанр книги
+    book_genre = fields.Selection(
+        [('adventures', 'приключения'),
+         ('fiction', 'фантастика'),
+         ('history', 'история'),
+         ('prose', 'проза'),
+         ('fantasy', 'фэнтези')],
+        'Жанр',
+    )
+
+    date_published = fields.Date('Год издания')
+    add_info = fields.Char(string='Автор/Название книги/Год издания',
+                           compute='_compute_name_author',
+                           readonly=False,)
+                           # inverse='_set_name_author',)
+
+    def _compute_name_author(self):
+        """
+        функция конкатенции 3-х полей - автора, названия книги и даты публикации
+        """
+        for book in self:
+            name_book = book.name
+            author = book.author_ids.name
+            if book.date_published:
+                year = book.date_published.strftime("%Y")
+            else:
+                year = 'Год издания не известен'
+            book.add_info = f'{author} - {name_book} ({year})'
+
+    # кнопка вызова дополнительной информации
+    check_button = fields.Boolean(string='Доп. информация')
+
+    # @api.onchange(check_button)
+    def _all_checked(self):
+        """
+        функция реализации чекбокса (вызов скрытого поля)
+        """
+        if self.check_button:
+            self.check_button = False
+        else:
+            self.check_button = True
+
+    notes = fields.Text(string='Краткое содержание', limit=150)
+    shot_information = fields.Selection([('one', 'To_push')], 'Примечание')
+
+    # def _set_name_author(self):
+    #     """
+    #     функция позволяющая сделать поле add_info редактируемым
+    #     """
+    #     for book in self:
+    #         if not book.add_info:
+    #             continue
+    #         with open(book._compute_name_author) as f:
+    #             f.write(book.add_info)
+
+    # date_published = fields.Date(string='Год издания',
+    #                              compute='_compute_change_date',)
+    #                              inverse='_set_change_date',)
+
+    # @api.depends('date_published')
+    # def _compute_change_date(self):
+    #     """
+    #     функция переводящая формат даты ДД.ММ.ГГ просто в год
+    #     """
+    #     for book in self:
+    #         if book.date_published:
+    #             year_published = book.date_published.strftime("%Y")
+    #             book.date_published = f'{year_published}'
+
+    # def _set_change_date(self):
+    #     for book in self:
+    #         if not book.date_published:
+    #             continue
+    #         with open(book._compute_change_date) as f:
+    #             f.write(book.date_published)
+
+    # Text многострочный текст. Единственный позиционный аргумент - это строка,
+    # метка поля
+
     def button_check_isbn(self):
         """
         использование  функции _check_isbn для проверки isbn
@@ -152,62 +242,6 @@ class Book(models.Model):
             # check = 10 - remain if remain != 0 else 0
             check = 10 - remain if remain != 0 else 0
         return digits[-1] == check
-
-    category_id = fields.Many2one('library.book.category', string='Category')
-
-    #  чтобы страна издателя была в книжной форме.
-    # дя этого используем вычисляемое поле на основе publisher_id,
-    # значение которого будет принимать значение из поля country_id издателя.
-
-    publisher_country_id = fields.Many2one(
-        'res.country', string='Publisher Country',
-        compute='_compute_publisher_country',
-        # store = False, # Default is not to store in db
-        # функция поиска для реализации логики поиска и
-        # обратная функция для реализации логики записи.
-        inverse='_inverse_publisher_country',
-        search='_search_publisher_country',
-    )
-
-    date_published = fields.Date('год издания')
-
-    # date_published = fields.Date(string='Год издания',
-    #                              compute='_compute_change_date',)
-    name_author_date = fields.Char(string='Автор/Название книги/Год издания',
-                                   compute='_compute_name_author',)
-
-    @api.depends('author_ids.name')
-    def _compute_name_author(self):
-        for book in self:
-            name_book = book.name
-            author = book.author_ids.name
-            # year = book.date_published
-            if book.date_published:
-                year = book.date_published.strftime("%Y")
-            else:
-                year = 'Год издания не известен'
-            book.name_author_date = f'{author} - {name_book} ({year})'
-
-
-
-    # @api.depends('date_published')
-    # def _compute_change_date(self):
-    #     for book in self:
-    #         if book.date_published:
-    #             year_published = book.date_published.strftime("%Y")
-    #             book.date_published = f'{year_published}'
-
-    # @api.depends('author_ids.name')
-    # def _compute_name_author(self):
-    #     for book in self:
-    #         name_book = book.name
-    #         author = book.author_ids.name
-    #         year = book.date_published
-    #         if book.date_published:
-    #             book.name_author_date = f'{author} - {name_book} ({year})'
-    #         else:
-    #             year = 'Год издания не известен'
-    #         book.name_author_date = f'{author} - {name_book} ({year})'
 
     # @ api.depends (fld1, ...) используется для вычисляемых функций поля,
     # чтобы определить, при каких изменениях (повторное) вычисление должно
