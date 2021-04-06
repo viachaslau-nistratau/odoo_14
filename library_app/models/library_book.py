@@ -111,6 +111,8 @@ class Book(models.Model):
     # поле publisher_id представляет издателя книги и является
     # ссылкой на запись в партнерской модели
 
+    category_id = fields.Many2one('library.book.category', string='Категория')
+
     publisher_id = fields.Many2one('res.partner', string='Издательство')
 
     # связь "многие ко многим" между книгами и авторами: у каждой книги
@@ -121,8 +123,6 @@ class Book(models.Model):
     # позиционный аргумент.
 
     author_ids = fields.Many2many('res.partner', string='Автор/Авторы')
-
-    category_id = fields.Many2one('library.book.category', string='Категория')
 
     #  чтобы страна издателя была в книжной форме.
     # дя этого используем вычисляемое поле на основе publisher_id,
@@ -144,44 +144,66 @@ class Book(models.Model):
          ('fiction', 'фантастика'),
          ('history', 'история'),
          ('prose', 'проза'),
-         ('fantasy', 'фэнтези')],
+         ('fantasy', 'фэнтези'),
+         ('scientific_literature', 'научная литература'), ],
         'Жанр',
     )
 
-    date_published = fields.Date('Год издания')
+    genre_id = fields.One2many('library.book.genre', string='Жанр книги')
+
+    # date_published = fields.Date('Год издания')
     add_info = fields.Char(string='Автор/Название книги/Год издания',
                            compute='_compute_name_author',
                            readonly=False,)
                            # inverse='_set_name_author',)
 
+    # @api.depends('author_ids.name')
+    # def _compute_name_author(self):
+    #     """
+    #     функция конкатенции 3-х полей - автора, названия книги
+    #     и даты публикации
+    #     """
+    #     for book in self:
+    #         name_book = book.name
+    #         author = book.author_ids.name
+    #         if book.date_published:
+    #             year = book.date_published.strftime("%Y")
+    #         else:
+    #             year = 'Год издания не известен'
+    #         book.add_info = f'{author} - {name_book} ({year})'
+
+    # кнопка вызова дополнительной информации
+    check_button = fields.Boolean(string='Доп. информация')
+    notes = fields.Text(string='Краткое содержание', limit=150)
+    # radiobutton - вызов поля - краткое содержание
+    shot_information = fields.Selection([('one', 'To_push')], 'Примечание')
+
+    date_published = fields.Char(string='Год издания')
+
+    @api.depends('author_ids.name')
     def _compute_name_author(self):
         """
         функция конкатенции 3-х полей - автора, названия книги и даты публикации
+        второй вариант когда дата - всего лишь год
         """
         for book in self:
             name_book = book.name
             author = book.author_ids.name
             if book.date_published:
-                year = book.date_published.strftime("%Y")
+                year = book.date_published
             else:
                 year = 'Год издания не известен'
             book.add_info = f'{author} - {name_book} ({year})'
 
-    # кнопка вызова дополнительной информации
-    check_button = fields.Boolean(string='Доп. информация')
-
     # @api.onchange(check_button)
-    def _all_checked(self):
-        """
-        функция реализации чекбокса (вызов скрытого поля)
-        """
-        if self.check_button:
-            self.check_button = False
-        else:
-            self.check_button = True
-
-    notes = fields.Text(string='Краткое содержание', limit=150)
-    shot_information = fields.Selection([('one', 'To_push')], 'Примечание')
+    # def _all_checked(self):
+    #     """
+    #     функция реализации чекбокса (вызов скрытого поля)
+    #     """
+    #     if self.check_button:
+    #         self.check_button = False
+    #     else:
+    #         self.check_button = True
 
     # def _set_name_author(self):
     #     """
@@ -194,9 +216,10 @@ class Book(models.Model):
     #             f.write(book.add_info)
 
     # date_published = fields.Date(string='Год издания',
-    #                              compute='_compute_change_date',)
-    #                              inverse='_set_change_date',)
-
+    #                              compute='_compute_change_date',
+    #                              readonly=False,)
+    #                              # inverse='_set_change_date',)
+    #
     # @api.depends('date_published')
     # def _compute_change_date(self):
     #     """
@@ -204,8 +227,7 @@ class Book(models.Model):
     #     """
     #     for book in self:
     #         if book.date_published:
-    #             year_published = book.date_published.strftime("%Y")
-    #             book.date_published = f'{year_published}'
+    #             book.date_published = book.date_published.strftime("%Y")
 
     # def _set_change_date(self):
     #     for book in self:
