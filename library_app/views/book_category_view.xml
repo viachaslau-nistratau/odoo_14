@@ -7,11 +7,9 @@
             <form>
                 <group>
                     <field name="name"/>
-                    <field name="parent_id"/>
-                    <field name="child_ids" widget="many2many_tags"/>
-                    <field name="highlighted_id"/>
                 </group>
              </form>
         </field>
     </record>
 </odoo>
+

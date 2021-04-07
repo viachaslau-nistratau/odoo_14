@@ -30,7 +30,9 @@ class Book(models.Model):
     # использование аргументов ключевого слова для атрибутов поля:
 
     name = fields.Char(
-        'Название книги',)
+        string='Название книги',
+        requered=True,
+        size=25,)
     #     default=None,
     #     index=True,
     #     help='Book cover title',
@@ -105,15 +107,13 @@ class Book(models.Model):
     # только строку аргумент. может быть обработано кодом Python с
     # использованием строк в кодировке base64.
 
-    image = fields.Binary('Обложка книги')
+    image = fields.Binary(string='Обложка книги')
 
     # Relation fields
     # поле publisher_id представляет издателя книги и является
     # ссылкой на запись в партнерской модели
 
-    category_id = fields.Many2one('library.book.category', string='Категория')
-
-    publisher_id = fields.Many2one('res.partner', string='Издательство')
+    publisher_id = fields.Many2one(comodel_name='res.partner', string='Издательство')
 
     # связь "многие ко многим" между книгами и авторами: у каждой книги
     # может быть много авторов, и у каждого автора может быть много книг
@@ -122,14 +122,14 @@ class Book(models.Model):
     # Date (string) и Datetime(string) ожидают только текст строки как
     # позиционный аргумент.
 
-    author_ids = fields.Many2many('res.partner', string='Автор/Авторы')
+    author_ids = fields.Many2many(comodel_name='res.partner', string='Автор/Авторы')
 
     #  чтобы страна издателя была в книжной форме.
     # дя этого используем вычисляемое поле на основе publisher_id,
     # значение которого будет принимать значение из поля country_id издателя.
 
     publisher_country_id = fields.Many2one(
-        'res.country', string='Publisher Country',
+        comodel_name='res.country', string='Publisher Country',
         compute='_compute_publisher_country',
         # store = False, # Default is not to store in db
         # функция поиска для реализации логики поиска и
@@ -139,46 +139,66 @@ class Book(models.Model):
     )
 
     # жанр книги
-    book_genre = fields.Selection(
-        [('adventures', 'приключения'),
-         ('fiction', 'фантастика'),
-         ('history', 'история'),
-         ('prose', 'проза'),
-         ('fantasy', 'фэнтези'),
-         ('scientific_literature', 'научная литература'), ],
-        'Жанр',
-    )
-
-    genre_id = fields.One2many('library.book.genre', string='Жанр книги')
+    # book_genre = fields.Selection(
+    #     [('adventures', 'приключения'),
+    #      ('fiction', 'фантастика'),
+    #      ('history', 'история'),
+    #      ('prose', 'проза'),
+    #      ('fantasy', 'фэнтези'),
+    #      ('scientific_literature', 'научная литература'), ],
+    #     'Жанр',
+    # )
 
     # date_published = fields.Date('Год издания')
+
+    category_id = fields.Many2many(comodel_name='library.book.category',
+                                   string='Категория',)
+
     add_info = fields.Char(string='Автор/Название книги/Год издания',
                            compute='_compute_name_author',
-                           readonly=False,)
+                           readonly=False,
+                           )
                            # inverse='_set_name_author',)
 
-    # @api.depends('author_ids.name')
-    # def _compute_name_author(self):
-    #     """
-    #     функция конкатенции 3-х полей - автора, названия книги
-    #     и даты публикации
-    #     """
-    #     for book in self:
-    #         name_book = book.name
-    #         author = book.author_ids.name
-    #         if book.date_published:
-    #             year = book.date_published.strftime("%Y")
-    #         else:
-    #             year = 'Год издания не известен'
-    #         book.add_info = f'{author} - {name_book} ({year})'
+    count_page = fields.Integer(string='Количество страниц')
+    # status_book = fields.Selection(
+    #     [('do_not_read', 'не читал'),
+    #      ('read_on', 'начал читать'),
+    #      ('read_off', 'прочитано'), ],
+    #     'Статус книги',
+    # )
 
-    # кнопка вызова дополнительной информации
+    BOOK_STATUS_WANTED = 'wanted'
+
+    BOOK_STATUS_IN_PROGRESS = 'in_progress'
+
+    BOOK_STATUS_DONE = 'done'
+
+    BOOK_STATUS = [
+        (BOOK_STATUS_WANTED, 'Хочу прочитать'),
+        (BOOK_STATUS_IN_PROGRESS, 'Читаю'),
+        (BOOK_STATUS_DONE, 'Книга прочитана'),
+    ]
+
+    status_book = fields.Selection(
+        BOOK_STATUS,
+        string='статус книги',
+        default=BOOK_STATUS_WANTED,
+    )
+
+    # checkbox (флажки) вызова дополнительной информации
     check_button = fields.Boolean(string='Доп. информация')
-    notes = fields.Text(string='Краткое содержание', limit=150)
-    # radiobutton - вызов поля - краткое содержание
-    shot_information = fields.Selection([('one', 'To_push')], 'Примечание')
+    notes = fields.Text(size=250)
+    check_button_notes = fields.Boolean(string='Краткое содержание')
 
-    date_published = fields.Char(string='Год издания')
+    # чем неудобен radiobutton (переключатель), после выбора переключателя
+    # пользователь не может отменить выбор, чтобы восстановить исходное состояние группы
+    # radiobutton - вызов поля - краткое содержание
+    # shot_information = fields.Selection([('one', 'to_push'),
+    #                                      ('two', 'squeeze_out'), ],
+    #                                     'Примечание')
+
+    date_published = fields.Char(string='Год издания', size=4,)
 
     @api.depends('author_ids.name')
     def _compute_name_author(self):
@@ -195,46 +215,30 @@ class Book(models.Model):
                 year = 'Год издания не известен'
             book.add_info = f'{author} - {name_book} ({year})'
 
-    # @api.onchange(check_button)
-    # def _all_checked(self):
-    #     """
-    #     функция реализации чекбокса (вызов скрытого поля)
-    #     """
-    #     if self.check_button:
-    #         self.check_button = False
-    #     else:
-    #         self.check_button = True
+    date_start_read = fields.Date(string='Начало чтения')
+    date_finish_read = fields.Date(string='Окончание чтения')
 
-    # def _set_name_author(self):
-    #     """
-    #     функция позволяющая сделать поле add_info редактируемым
-    #     """
-    #     for book in self:
-    #         if not book.add_info:
-    #             continue
-    #         with open(book._compute_name_author) as f:
-    #             f.write(book.add_info)
+    def start_read_book(self):
+        """
+        меняется статус книги на 'читаю', дата начала чтения книги
+        :return: True - результат записи - смены статуса книги
+        """
+        self.write({
+            'status_book': BOOK_STATUS_IN_PROGRESS,
+            'date_start_read': fields.Date.today(),
+        })
+        return True
 
-    # date_published = fields.Date(string='Год издания',
-    #                              compute='_compute_change_date',
-    #                              readonly=False,)
-    #                              # inverse='_set_change_date',)
-    #
-    # @api.depends('date_published')
-    # def _compute_change_date(self):
-    #     """
-    #     функция переводящая формат даты ДД.ММ.ГГ просто в год
-    #     """
-    #     for book in self:
-    #         if book.date_published:
-    #             book.date_published = book.date_published.strftime("%Y")
-
-    # def _set_change_date(self):
-    #     for book in self:
-    #         if not book.date_published:
-    #             continue
-    #         with open(book._compute_change_date) as f:
-    #             f.write(book.date_published)
+    def finish_read_book(self):
+        """
+        меняется статус книги на 'прочитано', дата окончания чтения книги
+        :return: True - результат записи - смены статуса книги
+        """
+        self.write({
+            'status_book': BOOK_STATUS_DONE,
+            'date_finish_read': fields.Date.today(),
+        })
+        return True
 
     # Text многострочный текст. Единственный позиционный аргумент - это строка,
     # метка поля
@@ -320,3 +324,59 @@ class Book(models.Model):
         for book in self:
             if book.isbn and not book._check_isbn():
                 raise ValidationError('%s is an invalid ISBN' % book.isbn)
+
+            # @api.depends('author_ids.name')
+            # def _compute_name_author(self):
+            #     """
+            #     функция конкатенции 3-х полей - автора, названия книги
+            #     и даты публикации
+            #     """
+            #     for book in self:
+            #         name_book = book.name
+            #         author = book.author_ids.name
+            #         if book.date_published:
+            #             year = book.date_published.strftime("%Y")
+            #         else:
+            #             year = 'Год издания не известен'
+            #         book.add_info = f'{author} - {name_book} ({year})'
+
+            # @api.onchange(check_button)
+            # def _all_checked(self):
+            #     """
+            #     функция реализации чекбокса (вызов скрытого поля)
+            #     """
+            #     if self.check_button:
+            #         self.check_button = False
+            #     else:
+            #         self.check_button = True
+
+            # def _set_name_author(self):
+            #     """
+            #     функция позволяющая сделать поле add_info редактируемым
+            #     """
+            #     for book in self:
+            #         if not book.add_info:
+            #             continue
+            #         with open(book._compute_name_author) as f:
+            #             f.write(book.add_info)
+
+            # date_published = fields.Date(string='Год издания',
+            #                              compute='_compute_change_date',
+            #                              readonly=False,)
+            #                              # inverse='_set_change_date',)
+            #
+            # @api.depends('date_published')
+            # def _compute_change_date(self):
+            #     """
+            #     функция переводящая формат даты ДД.ММ.ГГ просто в год
+            #     """
+            #     for book in self:
+            #         if book.date_published:
+            #             book.date_published = book.date_published.strftime("%Y")
+
+            # def _set_change_date(self):
+            #     for book in self:
+            #         if not book.date_published:
+            #             continue
+            #         with open(book._compute_change_date) as f:
+            #             f.write(book.date_published)

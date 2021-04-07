@@ -12,6 +12,16 @@
                             type="object"
                             string="Проверка ISBN"
                     />
+                    <button name="start_read_book"
+                            type="object"
+                            string="начать читать книгу"
+                            class="btn-primary"
+                    />
+                    <button name="finish_read_book"
+                            type="object"
+                            string="книга прочитана"
+                            class="btn-primary"
+                    />
                 </header>
                 <sheet>
                     <group name="group_top">
@@ -25,10 +35,18 @@
                             <field name="add_info" attrs="{'invisible':[('check_button','=',False)]}"/>
                             <field name="publisher_id"/>
                             <field name="date_published"/>
-                            <field name="book_genre"/>
+                            <field name="category_id" widget="many2many_tags"/>
                             <field name="book_type"/>
-                            <field name="shot_information" widget="radio"/>
-                            <field name="notes" attrs="{'invisible':[('shot_information','=',False)]}"/>
+                            <field name="count_page"/>
+                            <!--реализация вызова инфы из поля add_info (видимое/невидимое)-->
+                            <field name="check_button_notes"/>
+                            <field name="notes" attrs="{'invisible':[('check_button_notes','=',False)]}"/>
+                            <field name="status_book"/>
+                            <field name="date_start_read"/>
+                            <field name="date_finish_read"/>
+                            <!--радиобаттон-->
+                            <!--<field name="shot_information" widget="radio"/>-->
+                            <!--<field name="notes" attrs="{'invisible':[('shot_information','=',False)]}"/>-->
                         </group>
                         <group name="group_right">
                             <field name="isbn" />
@@ -50,10 +68,12 @@
 				<field name="name"/>
 				<field name="author_ids"
                        widget="many2many_tags"/>
-				<field name="publisher_id" />
+				<field name="category_id"
+                       widget="many2many_tags"/>
+                <field name="count_page"/>
 				<field name="date_published"/>
                 <field name="book_type"/>
-                <field name="book_genre"/>
+                <field name="status_book"/>
 			</tree>
 		</field>
     </record>

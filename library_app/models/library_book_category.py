@@ -11,7 +11,8 @@ class BookCategory(models.Model):
     #  ускорить поиск в дереве, добавляем атрибут модели _parent_store = True.
     _parent_store = True
 
-    name = fields.Char(translate=True, required=True)
+    name = fields.Char(string='Жанр книги', translate=True, required=True)
+
     # Hierarchy fields
     # поле parent_id для ссылки на родительскую запись.
     parent_id = fields.Many2one(

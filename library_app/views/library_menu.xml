@@ -17,4 +17,16 @@
               action="action_library_book"
     />
 
+    <record model="ir.actions.act_window" id="action_library_book_category">
+        <field name="name">Book Category</field>
+        <field name="res_model">library.book.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="library_book_category"
+              name="Категории книг"
+              parent="menu_library"
+              action="action_library_book_category"
+    />
+
 </odoo>
