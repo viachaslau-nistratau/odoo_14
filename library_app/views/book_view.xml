@@ -11,6 +11,7 @@
                     <button name="button_check_isbn"
                             type="object"
                             string="Проверка ISBN"
+                            class="btn-primary"
                     />
                     <button name="start_read_book"
                             type="object"

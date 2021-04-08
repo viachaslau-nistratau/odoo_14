@@ -11,5 +11,28 @@
              </form>
         </field>
     </record>
-</odoo>
 
+    <record id="view_tree_category" model="ir.ui.view">
+        <field name="name">Book Category List</field>
+        <field name="model">library.book.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+<!--    <record id="view_search_category" model="ir.ui.view">-->
+<!--        <field name="name">Category Filters</field>-->
+<!--        <field name="model">library.book.category</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <search string="Жанр книги">-->
+<!--                <group expend="0" string="group by">-->
+<!--                    <filter name="name_genre" string="Жанр книги"-->
+<!--                            domain="[]" context="{'group_by':'name_genre'}"/>-->
+<!--                </group>-->
+<!--            </search>-->
+<!--        </field>-->
+<!--    </record>-->
+
+</odoo>

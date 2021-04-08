@@ -2,6 +2,10 @@
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 
+BOOK_STATUS_WANTED = 'wanted'
+BOOK_STATUS_IN_PROGRESS = 'in_progress'
+BOOK_STATUS_DONE = 'done'
+
 
 class Book(models.Model):
     """
@@ -33,13 +37,10 @@ class Book(models.Model):
         string='Название книги',
         requered=True,
         size=25,)
-    #     default=None,
-    #     index=True,
-    #     help='Book cover title',
-    #     readonly=False,
-    #     required=True,
-    #     translate=False,
-    # )
+    """
+    дополнительные атрибуты - default=None, index=True, help='Book cover title', 
+    readonly=False, required=True, translate=False,
+    """
 
     # String fields: name = fields.Char('Title')
     # Char (string) - это одна строка текста.
@@ -161,18 +162,6 @@ class Book(models.Model):
                            # inverse='_set_name_author',)
 
     count_page = fields.Integer(string='Количество страниц')
-    # status_book = fields.Selection(
-    #     [('do_not_read', 'не читал'),
-    #      ('read_on', 'начал читать'),
-    #      ('read_off', 'прочитано'), ],
-    #     'Статус книги',
-    # )
-
-    BOOK_STATUS_WANTED = 'wanted'
-
-    BOOK_STATUS_IN_PROGRESS = 'in_progress'
-
-    BOOK_STATUS_DONE = 'done'
 
     BOOK_STATUS = [
         (BOOK_STATUS_WANTED, 'Хочу прочитать'),
@@ -191,9 +180,11 @@ class Book(models.Model):
     notes = fields.Text(size=250)
     check_button_notes = fields.Boolean(string='Краткое содержание')
 
-    # чем неудобен radiobutton (переключатель), после выбора переключателя
-    # пользователь не может отменить выбор, чтобы восстановить исходное состояние группы
-    # radiobutton - вызов поля - краткое содержание
+    """
+    чем неудобен radiobutton (переключатель), после выбора переключателя
+    пользователь не может отменить выбор, чтобы восстановить исходное состояние
+    группы radiobutton - вызов поля - краткое содержание
+    """
     # shot_information = fields.Selection([('one', 'to_push'),
     #                                      ('two', 'squeeze_out'), ],
     #                                     'Примечание')
