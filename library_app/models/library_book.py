@@ -114,7 +114,8 @@ class Book(models.Model):
     # поле publisher_id представляет издателя книги и является
     # ссылкой на запись в партнерской модели
 
-    publisher_id = fields.Many2one(comodel_name='res.partner', string='Издательство')
+    publisher_id = fields.Many2one(comodel_name='res.partner',
+                                   string='Издательство')
 
     # связь "многие ко многим" между книгами и авторами: у каждой книги
     # может быть много авторов, и у каждого автора может быть много книг
@@ -123,7 +124,8 @@ class Book(models.Model):
     # Date (string) и Datetime(string) ожидают только текст строки как
     # позиционный аргумент.
 
-    author_ids = fields.Many2many(comodel_name='res.partner', string='Автор/Авторы')
+    author_ids = fields.Many2many(comodel_name='res.partner',
+                                  string='Автор/Авторы')
 
     #  чтобы страна издателя была в книжной форме.
     # дя этого используем вычисляемое поле на основе publisher_id,
@@ -138,19 +140,6 @@ class Book(models.Model):
         inverse='_inverse_publisher_country',
         search='_search_publisher_country',
     )
-
-    # жанр книги
-    # book_genre = fields.Selection(
-    #     [('adventures', 'приключения'),
-    #      ('fiction', 'фантастика'),
-    #      ('history', 'история'),
-    #      ('prose', 'проза'),
-    #      ('fantasy', 'фэнтези'),
-    #      ('scientific_literature', 'научная литература'), ],
-    #     'Жанр',
-    # )
-
-    # date_published = fields.Date('Год издания')
 
     category_id = fields.Many2many(comodel_name='library.book.category',
                                    string='Категория',)
@@ -177,13 +166,14 @@ class Book(models.Model):
 
     # checkbox (флажки) вызова дополнительной информации
     check_button = fields.Boolean(string='Доп. информация')
-    notes = fields.Text(size=250)
+    # тесктовое поле не имеет размера
+    notes = fields.Text()
     check_button_notes = fields.Boolean(string='Краткое содержание')
 
     """
     чем неудобен radiobutton (переключатель), после выбора переключателя
     пользователь не может отменить выбор, чтобы восстановить исходное состояние
-    группы radiobutton - вызов поля - краткое содержание
+    группы radiobutton 
     """
     # shot_information = fields.Selection([('one', 'to_push'),
     #                                      ('two', 'squeeze_out'), ],
@@ -315,6 +305,19 @@ class Book(models.Model):
         for book in self:
             if book.isbn and not book._check_isbn():
                 raise ValidationError('%s is an invalid ISBN' % book.isbn)
+
+            # жанр книги
+            # book_genre = fields.Selection(
+            #     [('adventures', 'приключения'),
+            #      ('fiction', 'фантастика'),
+            #      ('history', 'история'),
+            #      ('prose', 'проза'),
+            #      ('fantasy', 'фэнтези'),
+            #      ('scientific_literature', 'научная литература'), ],
+            #     'Жанр',
+            # )
+
+            # date_published = fields.Date('Год издания')
 
             # @api.depends('author_ids.name')
             # def _compute_name_author(self):

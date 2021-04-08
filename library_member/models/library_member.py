@@ -12,7 +12,21 @@ class Member(models.Model):
     # и mail.activity.mixin миксин классов
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    card_number = fields.Char()
+    image = fields.Binary(string='Фотография')
+
+    # фамилия, имя, отчество
+    family_name_surname = fields.Char(
+        string='ФИО',
+        requered=True,
+        size=40,)
+
+    # учетный номер
+    card_number = fields.Char(string='Учетный номер', size=4)
+
+    # Дата регистрации в библиотеке, дата ухода
+    date_start_library = fields.Date(string='Дата регистрации в библиотеке')
+    date_finish_library = fields.Date(string='Дата окончания')
+
     partner_id = fields.Many2one(
         'res.partner',
         delegate=True,
