@@ -6,27 +6,58 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-<!--                    <button name="date_reg_in_library"-->
-<!--                            type="object"-->
-<!--                            string="Дата регистрации абонента"-->
-<!--                            class="btn-primary"-->
-<!--                    />-->
-<!--                    <button name="date_out_library"-->
-<!--                            type="object"-->
-<!--                            string="Дата окончания"-->
-<!--                            class="btn-primary"-->
-<!--                    />-->
+                    <button name="date_reg_in_library"
+                            type="object"
+                            string="Дата регистрации абонента"
+                            class="btn-primary"
+                    />
+                    <button name="date_out_library"
+                            type="object"
+                            string="Дата окончания"
+                            class="btn-primary"
+                    />
                 </header>
                 <sheet>
                     <group name="group_top">
                         <group name="group_left">
-                            <field name="image" widget="image"/>
+                            <field name="user_image" widget="image"/>
+                        </group>
+                        <group name="group_right">
                             <field name="card_number"/>
-                            <field name="family_name_surname"/>
+                            <field name="name"/>
                             <field name="date_start_library"/>
                             <field name="date_finish_library"/>
                         </group>
-
+                    </group>
+                    <group name="group_top">
+                        <group>
+                            <field name="check_button_info"/>
+                            <field name="home_address_member"
+                                   attrs="{'invisible':[('check_button_info','=',False)]}"/>
+                            <field name="mobil_phone"
+                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>
+                            <field name="home_phone"
+                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>
+                            <field name="email"
+                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <field name="check_button_job"/>
+                            <field name="job_member"
+                                   attrs="{'invisible':[('check_button_job','=',False)]}"/>
+                            <field name="job_phone"
+                                   attrs="{'invisible':[('check_button_job', '=', False)]}"/>
+                        </group>
+                        <group>
+                            <!--<field name="check_button_book"/>
+                            <field name="name"
+                                    attrs="{'invisible':[('check_button_book','=',False)]}"/>-->
+                            <field name="check_button_book"/>
+                            <field name="date_take_book"
+                                   attrs="{'invisible':[('check_button_book','=',False)]}"/>
+                            <field name="date_return"
+                                   attrs="{'invisible':[('check_button_book', '=', False)]}"/>
+                        </group>
                     </group>
                 </sheet>
                 <!--mail mixin fields-->
@@ -49,7 +80,7 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="family_name_surname"/>
+                <field name="name"/>
                 <field name="card_number"/>
                 <field name="date_start_library"/>
                 <field name="date_finish_library"/>

@@ -2,7 +2,7 @@
 {
     'name': 'Library Members',
     'description': 'Manage people who will be able to borrow books.',
-    'author': 'Daniel Reis',
+    'author': 'Nistratau V.',
 
     # Добавляем зависимость от дополнительного модуля, предоставив миксин
     # Models: mail
