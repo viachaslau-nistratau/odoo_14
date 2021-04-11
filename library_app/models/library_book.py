@@ -3,7 +3,7 @@ from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 
 BOOK_STATUS_WANTED = 'wanted'
-BOOK_STATUS_IN_PROGRESS = 'in_progress'
+BOOK_STATUS_IN_PROGRESS = 'in_the_process'
 BOOK_STATUS_DONE = 'done'
 
 
@@ -122,7 +122,7 @@ class Book(models.Model):
 
     # Date and time fields
     # Date (string) и Datetime(string) ожидают только текст строки как
-    # позиционный аргумент.
+    # озиционный аргумент.
 
     author_ids = fields.Many2many(comodel_name='res.partner',
                                   string='Автор/Авторы')
@@ -142,7 +142,7 @@ class Book(models.Model):
     )
 
     category_id = fields.Many2many(comodel_name='library.book.category',
-                                   string='Категория',)
+                                   string='Жанр книги',)
 
     add_info = fields.Char(string='Автор/Название книги/Год издания',
                            compute='_compute_name_author',

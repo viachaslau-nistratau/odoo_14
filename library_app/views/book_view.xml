@@ -13,6 +13,10 @@
                             string="Проверка ISBN"
                             class="btn-primary"
                     />
+                    <field name="status_book"
+                           widget="statusbar"
+                           readonly="1"
+                    />
                     <button name="start_read_book"
                             type="object"
                             string="начать читать книгу"
@@ -42,7 +46,7 @@
                             <!--реализация вызова инфы из поля add_info (видимое/невидимое)-->
                             <field name="check_button_notes"/>
                             <field name="notes" attrs="{'invisible':[('check_button_notes','=',False)]}"/>
-                            <field name="status_book"/>
+<!--                            <field name="status_book"/>-->
                             <field name="date_start_read"/>
                             <field name="date_finish_read"/>
                             <!--радиобаттон-->
@@ -65,7 +69,7 @@
 		<field name="name">Book List</field>
 		<field name="model">library.book</field>
 		<field name="arch" type="xml">
-			<tree>
+			<tree string="Список книг">
 				<field name="name"/>
 				<field name="author_ids"
                        widget="many2many_tags"/>
@@ -84,14 +88,28 @@
 		<field name="model">library.book</field>
 		<field name="arch" type="xml">
 			<search>
-				<field name="publisher_id" />
-				<filter name="filter_inactive"
-					    string="Inactive"
-					    domain="[('active','=',True)]" />
-				<filter name="filter_active"
-					    string="Active"
-					    domain="[('active','=',False)]" />
+				<filter name="author_ids"
+                       string="Автор/Авторы"/>
+				<filter name="category_id"
+					    string="Жанр книги"/>
 			</search>
 		</field>
     </record>
 </odoo>
+
+            <!--<separator/>
+                <field name="want_reed_book" string="Хочу прочитать"
+                            domain="[('status_book', '=', 'wanted')]"/>
+                <field name="reading_book" string="Читаю"
+                            domain="[('status_book', '=', 'in_the_process"/>
+                <field name="book_already_read" string="Прочитал"
+                            domain="[('status_book', '=', 'done')]"/>
+             <separator/>-->
+
+                <!--<field name="publisher_id" />
+                <filter name="filter_inactive"
+                        string="Inactive"
+                        domain="[('active','=',True)]" />
+                <filter name="filter_active"
+                        string="Active"
+                        domain="[('active','=',False)]" />-->

@@ -24,17 +24,17 @@
         </field>
     </record>
 
-<!--    <record id="view_search_category" model="ir.ui.view">-->
-<!--        <field name="name">Category Filters</field>-->
-<!--        <field name="model">library.book.category</field>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <search string="Жанр книги">-->
-<!--                <group expend="0" string="group by">-->
-<!--                    <filter name="name_genre" string="Жанр книги"-->
-<!--                            domain="[]" context="{'group_by':'name_genre'}"/>-->
-<!--                </group>-->
-<!--            </search>-->
-<!--        </field>-->
-<!--    </record>-->
+    <record id="view_search_category" model="ir.ui.view">
+        <field name="name">Category Filters</field>
+        <field name="model">library.book.category</field>
+        <field name="arch" type="xml">
+            <search>
+				<filter name="author_ids"
+                       string="Автор/Авторы"/>
+				<filter name="category_id"
+                        string="Жанр книги"/>
+			</search>
+        </field>
+    </record>
 
 </odoo>

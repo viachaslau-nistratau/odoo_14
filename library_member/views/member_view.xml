@@ -30,34 +30,30 @@
                         </group>
                     </group>
                     <group name="group_top">
-                        <group>
-                            <field name="check_button_info"/>
-                            <field name="home_address_member"
-                                   attrs="{'invisible':[('check_button_info','=',False)]}"/>
-                            <field name="mobil_phone"
-                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>
-                            <field name="home_phone"
-                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>
-                            <field name="email"
-                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>
-                        </group>
-                        <group>
-                            <field name="check_button_job"/>
-                            <field name="job_member"
-                                   attrs="{'invisible':[('check_button_job','=',False)]}"/>
-                            <field name="job_phone"
-                                   attrs="{'invisible':[('check_button_job', '=', False)]}"/>
-                        </group>
-                        <group>
-                            <!--<field name="check_button_book"/>
-                            <field name="name"
-                                    attrs="{'invisible':[('check_button_book','=',False)]}"/>-->
-                            <field name="check_button_book"/>
-                            <field name="date_take_book"
-                                   attrs="{'invisible':[('check_button_book','=',False)]}"/>
-                            <field name="date_return"
-                                   attrs="{'invisible':[('check_button_book', '=', False)]}"/>
-                        </group>
+                        <notebook>
+                            <page name="check_button_info" string="Персональная информация">
+                                <group>
+                                    <field name="home_address_member"/>
+                                    <field name="mobil_phone"/>
+                                    <field name="home_phone"/>
+                                    <field name="email"/>
+                                </group>
+                            </page>
+
+                            <page name="check_button_job" string="Информация о месте работы">
+                                <group>
+                                    <field name="job_member"/>
+                                    <field name="job_phone"/>
+                                </group>
+                            </page>
+
+                            <page name="check_button_book" string="Информация о взятых в пользование книгах">
+                                <group>
+                                    <field name="date_take_book"/>
+                                    <field name="date_return"/>
+                                </group>
+                            </page>
+                        </notebook>
                     </group>
                 </sheet>
                 <!--mail mixin fields-->
@@ -88,3 +84,32 @@
         </field>
     </record>
 </odoo>
+
+<!--<group>-->
+<!--                            <field name="check_button_info"/>-->
+<!--                            <field name="home_address_member"-->
+<!--                                   attrs="{'invisible':[('check_button_info','=',False)]}"/>-->
+<!--                            <field name="mobil_phone"-->
+<!--                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>-->
+<!--                            <field name="home_phone"-->
+<!--                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>-->
+<!--                            <field name="email"-->
+<!--                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>-->
+<!--</group>-->
+<!--                        <group>-->
+<!--                            <field name="check_button_job"/>-->
+<!--                            <field name="job_member"-->
+<!--                                   attrs="{'invisible':[('check_button_job','=',False)]}"/>-->
+<!--                            <field name="job_phone"-->
+<!--                                   attrs="{'invisible':[('check_button_job', '=', False)]}"/>-->
+<!--                        </group>-->
+<!--                        <group>-->
+                            <!--<field name="check_button_book"/>
+                            <field name="name"
+                                    attrs="{'invisible':[('check_button_book','=',False)]}"/>-->
+<!--                            <field name="check_button_book"/>-->
+<!--                            <field name="date_take_book"-->
+<!--                                   attrs="{'invisible':[('check_button_book','=',False)]}"/>-->
+<!--                            <field name="date_return"-->
+<!--                                   attrs="{'invisible':[('check_button_book', '=', False)]}"/>-->
+<!--                        </group>-->
