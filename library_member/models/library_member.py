@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import fields, models
 
 
@@ -19,36 +21,44 @@ class Member(models.Model):
     family_name_surname = fields.Char(
         string='ФИО',
         requered=True,
-        size=40,)
+        size=40, )
 
     # учетный номер
     card_number = fields.Char(string='Номер абонемента', size=4)
 
     # Дата регистрации в библиотеке, дата ухода
-    date_start_library = fields.Date(string='Дата регистрации в библиотеке')
+    date_start_library = fields.Date(
+        string='Дата регистрации в библиотеке')
     date_finish_library = fields.Date(
         string='Дата окончания пользования библиотекой')
 
     # Блок персональной информации
-    check_button_info = fields.Boolean(string='Персональная информация')
-    # personal_info = fields.Boolean(string='Персональная информация')
+    personal_info = fields.Boolean(string='Персональная информация')
     home_address_member = fields.Char(string='Домашний адрес', size=100)
     mobil_phone = fields.Char(string='Номер мобильного телефона', size=15)
-    home_phone = fields.Char(string='Номер домашнего телефона',size=15)
+    home_phone = fields.Char(string='Номер домашнего телефона', size=15)
 
     # Блок информации о месте работы
-    check_button_job = fields.Boolean(string='Информация о месте работы')
+    info_about_place_job = fields.Boolean(string='Информация о месте работы')
     # info_about_job = fields.Char(string='Информация о месте работы')
     job_member = fields.Char(string='Место работы')
     job_phone = fields.Char(string='Рабочий телефон')
 
     # Блок информации о взятых в библиотеке книгах
-    check_button_book = fields.Boolean(string='Информация о взятых в пользование книгах')
+    info_about_borrowed_book = fields.Boolean(
+        string='Информация о взятых в пользование книгах')
+    name_book = fields.Char(string='Название книги')
     # info_about_book = fields.Char(string='Информация о взятых в пользование книгах')
     # name = fields.One2many(comodel_name='library.book',
     #                        string='Название книги', )
-    date_take_book = fields.Date(string='дата получения книги')
+    date_take_book = fields.Date(string='Дата получения книги')
     date_return = fields.Date(string='Дата возврата книги')
+
+    # date_return_book = fields.Date.today() + timedelta(days=10)
+    alarm_date = fields.Char(string='Примечание',
+                             compute='_alarm_date_return',
+                             readonly=False,
+                             )
 
     partner_id = fields.Many2one(
         'res.partner',
@@ -79,3 +89,43 @@ class Member(models.Model):
             'date_finish_library': fields.Date.today(),
         })
         return True
+
+    def date_take_book_in_library(self):
+        """
+        дата получения книги пользователем
+        """
+        self.write({
+            'date_take_book': fields.Date.today(),
+        })
+        return True
+
+    def date_return_book(self):
+        """
+        дата, когда необходимо вернуть книгу в библиотеку
+        """
+        self.write({
+            'date_return': fields.Date.today() + timedelta(days=1),
+        })
+        return True
+
+    def _alarm_date_return(self):
+        for member in self:
+            date_now = fields.Date.today()
+            if member.date_return == date_now:
+                note = 'ВНИМАНИЕ!!! Срок пользования книгой закончился'
+            else:
+                note = 'Срок пользования книгой не закончился'
+            member.alarm_date = f'{note}'
+
+    # def _compute_date_return_book(self):
+    #     """
+    #     дата, когда необходимо вернуть книгу в библиотеку
+    #     """
+    #     for member in self:
+    #         if member.date_take_book:
+    #             self.write({
+    #                 'date_return_book': fields.Date.today() + timedelta(days=10),
+    #             })
+    #             return True
+    #         else:
+    #             pass
