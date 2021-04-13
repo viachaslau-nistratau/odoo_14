@@ -167,8 +167,8 @@ class Book(models.Model):
     # checkbox (флажки) вызова дополнительной информации
     check_button = fields.Boolean(string='Доп. информация')
     # тесктовое поле не имеет размера
-    notes = fields.Text()
-    check_button_notes = fields.Boolean(string='Краткое содержание')
+    notes = fields.Text(string='Краткое содержание')
+    check_button_notes = fields.Boolean(string='Примечание')
 
     """
     чем неудобен radiobutton (переключатель), после выбора переключателя

@@ -28,8 +28,10 @@
                             <field name="user_image" widget="image"/>
                         </group>
                         <group name="group_right">
-                            <field name="card_number"/>
                             <field name="name"/>
+                            <field name="check_button_number"/>
+                            <field name="number_member"
+                                   attrs="{'invisible':[('check_button_number','=',False)]}"/>
                             <field name="date_start_library"/>
                             <field name="date_finish_library"/>
                         </group>
@@ -61,7 +63,8 @@
                                     </group>
                                 </group>
                             </page>
-
+<!-- некорректно работает, при внесении первой книги автоматом
+выставляется дата получения книги во всех трех полях (дата получения книги)-->
                             <page name="info_about_borrowed_book"
                                   string="Информация о взятых в пользование книгах">
                                 <group string="Книга № 1">
@@ -78,33 +81,53 @@
                                         />
                                     </header>
                                     <group>
-                                        <field name="name_book"/>
+                                        <field name="name_book_1"/>
                                         <field name="date_take_book"/>
                                         <field name="date_return"/>
                                         <field name="alarm_date"/>
                                     </group>
                                 </group>
 
-<!--                                <group string="Книга № 2">-->
-<!--                                    <header>-->
-<!--                                        <button name="date_take_book_in_library"-->
-<!--                                                type="object"-->
-<!--                                                string="Дата получения книги"-->
-<!--                                                class="btn-primary"-->
-<!--                                        />-->
-<!--                                        <button name="date_return_book"-->
-<!--                                                type="object"-->
-<!--                                                string="Дата возврата книги"-->
-<!--                                                class="btn-primary"-->
-<!--                                        />-->
-<!--                                    </header>-->
-<!--                                    <group>-->
-<!--                                        <field name="name_book"/>-->
-<!--                                        <field name="date_take_book"/>-->
-<!--                                        <field name="date_return"/>-->
-<!--                                        <field name="alarm_date"/>-->
-<!--                                    </group>-->
-<!--                                </group>-->
+                                <group string="Книга № 2">
+                                    <header>
+                                        <button name="date_take_book_in_library"
+                                                type="object"
+                                                string="Дата получения книги"
+                                                class="btn-primary"
+                                        />
+                                        <button name="date_return_book"
+                                                type="object"
+                                                string="Дата возврата книги"
+                                                class="btn-primary"
+                                        />
+                                    </header>
+                                    <group>
+                                        <field name="name_book_2"/>
+                                        <field name="date_take_book"/>
+                                        <field name="date_return"/>
+                                        <field name="alarm_date"/>
+                                    </group>
+                                </group>
+                                <group string="Книга № 3">
+                                    <header>
+                                        <button name="date_take_book_in_library"
+                                                type="object"
+                                                string="Дата получения книги"
+                                                class="btn-primary"
+                                        />
+                                        <button name="date_return_book"
+                                                type="object"
+                                                string="Дата возврата книги"
+                                                class="btn-primary"
+                                        />
+                                    </header>
+                                    <group>
+                                        <field name="name_book_3"/>
+                                        <field name="date_take_book"/>
+                                        <field name="date_return"/>
+                                        <field name="alarm_date"/>
+                                    </group>
+                                </group>
                             </page>
                         </notebook>
                     <!--</group>-->

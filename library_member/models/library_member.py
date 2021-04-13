@@ -9,7 +9,7 @@ class Member(models.Model):
     """
     _name = 'library.member'
     _description = 'Library Member'
-    _order = 'card_number, date_start_library'
+    _order = 'card_number'
     # наследование от классов миксинов выполняется с помощью _inherit атрибута.
     # надо сделать так, чтобы класс унаследовал mail.thread
     # и mail.activity.mixin миксин классов
@@ -23,10 +23,12 @@ class Member(models.Model):
     #     requered=True,
     #     size=40, )
 
-    # учетный номер
-    card_number = fields.Char(string='Номер абонемента',
+    card_number = fields.Char(string='Номер по порядку',
                               compute='number_card_member',
-                              size=3)
+                              size=2)
+    number_member = fields.Char(string='Номер абонемента пользователя',
+                                compute='number_card_member',)
+    check_button_number = fields.Boolean(string='Примечание')
 
     # Дата регистрации в библиотеке, дата ухода
     date_start_library = fields.Date(
@@ -43,14 +45,15 @@ class Member(models.Model):
 
     # Блок информации о месте работы
     info_about_place_job = fields.Boolean(string='Информация о месте работы')
-    # info_about_job = fields.Char(string='Информация о месте работы')
     job_member = fields.Char(string='Место работы')
     job_phone = fields.Char(string='Рабочий телефон')
 
     # Блок информации о взятых в библиотеке книгах
     info_about_borrowed_book = fields.Boolean(
         string='Информация о взятых в пользование книгах')
-    name_book = fields.Char(string='Название книги')
+    name_book_1 = fields.Char(string='Название книги')
+    name_book_2 = fields.Char(string='Название книги')
+    name_book_3 = fields.Char(string='Название книги')
     # info_about_book = fields.Char(string='Информация о взятых в пользование книгах')
     # name = fields.One2many(comodel_name='library.book',
     #                        string='Название книги', )
@@ -74,20 +77,30 @@ class Member(models.Model):
     # записи Участника связанный Партнер автоматически создается и указывается
     # в поле partner_id.
 
-    @api.depends()
+    # @api.depends()
     def number_card_member(self):
         """
-        присвоение порядкового номера (номера абонента) при регистрации
+        присвоение порядкового номера при регистрации
         нового пользователя
         !!! РАБОТАЕТ НЕКОРРЕКТНО - ИСПРАВИТЬ !!!
+        по идее number_card должен совпадать с number_member,
+        но это не происходит. Более того при создании новой записи -
+        нового пользователя библиотеки иногда происходит смещениеэ
+        пользователей. Может попробовать сортировать по дате регистрации
+        т.е. по полю datetime? ИСПРАВИТЬ
         """
-        number_card = 0
+        number_card = 1
         for member in self:
-            if member.name != '':
-                number_card += 1
-            else:
-                pass
             member.card_number = number_card
+            member.number_member = member.card_number
+            number_card += 1
+
+    # def add_number_member(self):
+    #     """
+    #
+    #     """
+    #     for member in self:
+    #         member.number_member = member.card_number
 
     def date_reg_in_library(self):
         """
