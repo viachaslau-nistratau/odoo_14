@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class Member(models.Model):
@@ -9,7 +9,7 @@ class Member(models.Model):
     """
     _name = 'library.member'
     _description = 'Library Member'
-    _order = 'family_name_surname'
+    _order = 'card_number, date_start_library'
     # наследование от классов миксинов выполняется с помощью _inherit атрибута.
     # надо сделать так, чтобы класс унаследовал mail.thread
     # и mail.activity.mixin миксин классов
@@ -18,19 +18,22 @@ class Member(models.Model):
     user_image = fields.Binary(string='Фотография пользователя библиотеки')
 
     # фамилия, имя, отчество
-    family_name_surname = fields.Char(
-        string='ФИО',
-        requered=True,
-        size=40, )
+    # family_name_surname = fields.Char(
+    #     string='ФИО',
+    #     requered=True,
+    #     size=40, )
 
     # учетный номер
-    card_number = fields.Char(string='Номер абонемента', size=4)
+    card_number = fields.Char(string='Номер абонемента',
+                              compute='number_card_member',
+                              size=3)
 
     # Дата регистрации в библиотеке, дата ухода
     date_start_library = fields.Date(
         string='Дата регистрации в библиотеке')
     date_finish_library = fields.Date(
         string='Дата окончания пользования библиотекой')
+    count_book = fields.Integer(string='Количество книг на руках', size=2)
 
     # Блок персональной информации
     personal_info = fields.Boolean(string='Персональная информация')
@@ -53,8 +56,7 @@ class Member(models.Model):
     #                        string='Название книги', )
     date_take_book = fields.Date(string='Дата получения книги')
     date_return = fields.Date(string='Дата возврата книги')
-
-    # date_return_book = fields.Date.today() + timedelta(days=10)
+    # date_return_book = fields.Date.today() + timedelta(days=1)
     alarm_date = fields.Char(string='Примечание',
                              compute='_alarm_date_return',
                              readonly=False,
@@ -71,6 +73,21 @@ class Member(models.Model):
     # унаследованные Модель, res.partner, так что при создании новой
     # записи Участника связанный Партнер автоматически создается и указывается
     # в поле partner_id.
+
+    @api.depends()
+    def number_card_member(self):
+        """
+        присвоение порядкового номера (номера абонента) при регистрации
+        нового пользователя
+        !!! РАБОТАЕТ НЕКОРРЕКТНО - ИСПРАВИТЬ !!!
+        """
+        number_card = 0
+        for member in self:
+            if member.name != '':
+                number_card += 1
+            else:
+                pass
+            member.card_number = number_card
 
     def date_reg_in_library(self):
         """
@@ -108,7 +125,11 @@ class Member(models.Model):
         })
         return True
 
+    @api.depends()
     def _alarm_date_return(self):
+        """
+        проверка истечения срока пользования книгой
+        """
         for member in self:
             date_now = fields.Date.today()
             if member.date_return == date_now:
@@ -124,7 +145,7 @@ class Member(models.Model):
     #     for member in self:
     #         if member.date_take_book:
     #             self.write({
-    #                 'date_return_book': fields.Date.today() + timedelta(days=10),
+    #                 'date_return': fields.Date.today() + timedelta(days=1),
     #             })
     #             return True
     #         else:

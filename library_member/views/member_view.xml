@@ -6,9 +6,14 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="number_card_member"
+                            type="object"
+                            string="Регистрация пользователя библиотеки"
+                            class="btn-primary"
+                    />
                     <button name="date_reg_in_library"
                             type="object"
-                            string="Дата регистрации абонента"
+                            string="Дата регистрации пользователя"
                             class="btn-primary"
                     />
                     <button name="date_out_library"
@@ -59,19 +64,19 @@
 
                             <page name="info_about_borrowed_book"
                                   string="Информация о взятых в пользование книгах">
-                                <header>
-                                    <button name="date_take_book_in_library"
-                                        type="object"
-                                        string="Дата получения книги"
-                                        class="btn-primary"
-                                    />
-                                    <button name="date_return_book"
-                                        type="object"
-                                        string="Дата возврата книги"
-                                        class="btn-primary"
-                                    />
-                                </header>
-                                <group>
+                                <group string="Книга № 1">
+                                    <header>
+                                        <button name="date_take_book_in_library"
+                                                type="object"
+                                                string="Дата получения книги"
+                                                class="btn-primary"
+                                        />
+                                        <button name="date_return_book"
+                                                type="object"
+                                                string="Дата возврата книги"
+                                                class="btn-primary"
+                                        />
+                                    </header>
                                     <group>
                                         <field name="name_book"/>
                                         <field name="date_take_book"/>
@@ -79,6 +84,27 @@
                                         <field name="alarm_date"/>
                                     </group>
                                 </group>
+
+<!--                                <group string="Книга № 2">-->
+<!--                                    <header>-->
+<!--                                        <button name="date_take_book_in_library"-->
+<!--                                                type="object"-->
+<!--                                                string="Дата получения книги"-->
+<!--                                                class="btn-primary"-->
+<!--                                        />-->
+<!--                                        <button name="date_return_book"-->
+<!--                                                type="object"-->
+<!--                                                string="Дата возврата книги"-->
+<!--                                                class="btn-primary"-->
+<!--                                        />-->
+<!--                                    </header>-->
+<!--                                    <group>-->
+<!--                                        <field name="name_book"/>-->
+<!--                                        <field name="date_take_book"/>-->
+<!--                                        <field name="date_return"/>-->
+<!--                                        <field name="alarm_date"/>-->
+<!--                                    </group>-->
+<!--                                </group>-->
                             </page>
                         </notebook>
                     <!--</group>-->
@@ -103,9 +129,10 @@
         <field name="model">library.member</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name"/>
                 <field name="card_number"/>
+                <field name="name"/>
                 <field name="date_start_library"/>
+                <field name="count_book"/>
                 <field name="date_finish_library"/>
             </tree>
         </field>
