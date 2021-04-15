@@ -9,7 +9,7 @@ class Member(models.Model):
     """
     _name = 'library.member'
     _description = 'Library Member'
-    _order = 'card_number'
+    # _order = 'card_number'
     # наследование от классов миксинов выполняется с помощью _inherit атрибута.
     # надо сделать так, чтобы класс унаследовал mail.thread
     # и mail.activity.mixin миксин классов
@@ -23,12 +23,12 @@ class Member(models.Model):
     #     requered=True,
     #     size=40, )
 
-    card_number = fields.Char(string='Номер по порядку',
+    card_number = fields.Char(string='Номер абонемента пользователя',
                               compute='number_card_member',
                               size=2)
-    number_member = fields.Char(string='Номер абонемента пользователя',
-                                compute='number_card_member',)
-    check_button_number = fields.Boolean(string='Примечание')
+    # number_member = fields.Char(string='Номер абонемента пользователя',)
+    #
+    # check_button_number = fields.Boolean(string='Примечание')
 
     # Дата регистрации в библиотеке, дата ухода
     date_start_library = fields.Date(
@@ -52,14 +52,13 @@ class Member(models.Model):
     info_about_borrowed_book = fields.Boolean(
         string='Информация о взятых в пользование книгах')
     name_book_1 = fields.Char(string='Название книги')
-    name_book_2 = fields.Char(string='Название книги')
-    name_book_3 = fields.Char(string='Название книги')
     # info_about_book = fields.Char(string='Информация о взятых в пользование книгах')
     # name = fields.One2many(comodel_name='library.book',
     #                        string='Название книги', )
-    date_take_book = fields.Date(string='Дата получения книги')
-    date_return = fields.Date(string='Дата возврата книги')
-    # date_return_book = fields.Date.today() + timedelta(days=1)
+    date_take_book = fields.Date(string='Дата получения книги',)
+    date_return = fields.Date(string='Дата возврата книги',)
+                              # compute='date_return_book',
+                              # )
     alarm_date = fields.Char(string='Примечание',
                              compute='_alarm_date_return',
                              readonly=False,
@@ -77,30 +76,16 @@ class Member(models.Model):
     # записи Участника связанный Партнер автоматически создается и указывается
     # в поле partner_id.
 
-    # @api.depends()
+    @api.depends()
     def number_card_member(self):
         """
         присвоение порядкового номера при регистрации
         нового пользователя
-        !!! РАБОТАЕТ НЕКОРРЕКТНО - ИСПРАВИТЬ !!!
-        по идее number_card должен совпадать с number_member,
-        но это не происходит. Более того при создании новой записи -
-        нового пользователя библиотеки иногда происходит смещениеэ
-        пользователей. Может попробовать сортировать по дате регистрации
-        т.е. по полю datetime? ИСПРАВИТЬ
         """
-        number_card = 1
         for member in self:
-            member.card_number = number_card
-            member.number_member = member.card_number
-            number_card += 1
-
-    # def add_number_member(self):
-    #     """
-    #
-    #     """
-    #     for member in self:
-    #         member.number_member = member.card_number
+            member.card_number = str(member.id)
+            # member_qty = self.search_count([])
+            # print('member_qty = ', member_qty)
 
     def date_reg_in_library(self):
         """
@@ -120,25 +105,27 @@ class Member(models.Model):
         })
         return True
 
-    def date_take_book_in_library(self):
-        """
-        дата получения книги пользователем
-        """
-        self.write({
-            'date_take_book': fields.Date.today(),
-        })
-        return True
+    # def date_take_book_in_library(self):
+    #     """
+    #     дата получения книги пользователем
+    #     """
+    #     self.write({
+    #         'date_take_book': fields.Date.today(),
+    #     })
+    #     return True
 
-    def date_return_book(self):
-        """
-        дата, когда необходимо вернуть книгу в библиотеку
-        """
-        self.write({
-            'date_return': fields.Date.today() + timedelta(days=1),
-        })
-        return True
+    # def date_return_book(self):
+    #     """
+    #     дата, когда необходимо вернуть книгу в библиотеку
+    #     """
+    #     self.write({
+    #         'date_return': 'date_take_book' + timedelta(days=1),
+    #     })
+    #     return True
 
-    @api.depends()
+    # 'date_return': fields.Date.today() + timedelta(days=1),
+
+
     def _alarm_date_return(self):
         """
         проверка истечения срока пользования книгой

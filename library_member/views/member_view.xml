@@ -29,9 +29,10 @@
                         </group>
                         <group name="group_right">
                             <field name="name"/>
-                            <field name="check_button_number"/>
-                            <field name="number_member"
-                                   attrs="{'invisible':[('check_button_number','=',False)]}"/>
+                            <field name="card_number"/>
+<!--                            <field name="check_button_number"/>-->
+<!--                            <field name="number_member"-->
+<!--                                   attrs="{'invisible':[('check_button_number','=',False)]}"/>-->
                             <field name="date_start_library"/>
                             <field name="date_finish_library"/>
                         </group>
@@ -63,66 +64,24 @@
                                     </group>
                                 </group>
                             </page>
-<!-- некорректно работает, при внесении первой книги автоматом
-выставляется дата получения книги во всех трех полях (дата получения книги)-->
+
                             <page name="info_about_borrowed_book"
                                   string="Информация о взятых в пользование книгах">
                                 <group string="Книга № 1">
-                                    <header>
-                                        <button name="date_take_book_in_library"
-                                                type="object"
-                                                string="Дата получения книги"
-                                                class="btn-primary"
-                                        />
-                                        <button name="date_return_book"
-                                                type="object"
-                                                string="Дата возврата книги"
-                                                class="btn-primary"
-                                        />
-                                    </header>
+<!--                                    <header>-->
+<!--                                        <button name="date_take_book_in_library"-->
+<!--                                                type="object"-->
+<!--                                                string="Дата получения книги"-->
+<!--                                                class="btn-primary"-->
+<!--                                        />-->
+<!--                                        <button name="date_return_book"-->
+<!--                                                type="object"-->
+<!--                                                string="Дата возврата книги"-->
+<!--                                                class="btn-primary"-->
+<!--                                        />-->
+<!--                                    </header>-->
                                     <group>
                                         <field name="name_book_1"/>
-                                        <field name="date_take_book"/>
-                                        <field name="date_return"/>
-                                        <field name="alarm_date"/>
-                                    </group>
-                                </group>
-
-                                <group string="Книга № 2">
-                                    <header>
-                                        <button name="date_take_book_in_library"
-                                                type="object"
-                                                string="Дата получения книги"
-                                                class="btn-primary"
-                                        />
-                                        <button name="date_return_book"
-                                                type="object"
-                                                string="Дата возврата книги"
-                                                class="btn-primary"
-                                        />
-                                    </header>
-                                    <group>
-                                        <field name="name_book_2"/>
-                                        <field name="date_take_book"/>
-                                        <field name="date_return"/>
-                                        <field name="alarm_date"/>
-                                    </group>
-                                </group>
-                                <group string="Книга № 3">
-                                    <header>
-                                        <button name="date_take_book_in_library"
-                                                type="object"
-                                                string="Дата получения книги"
-                                                class="btn-primary"
-                                        />
-                                        <button name="date_return_book"
-                                                type="object"
-                                                string="Дата возврата книги"
-                                                class="btn-primary"
-                                        />
-                                    </header>
-                                    <group>
-                                        <field name="name_book_3"/>
                                         <field name="date_take_book"/>
                                         <field name="date_return"/>
                                         <field name="alarm_date"/>
@@ -160,33 +119,21 @@
             </tree>
         </field>
     </record>
+
+    <record id="view_search_member" model="ir.ui.view">
+        <field name="name">Library Member Search</field>
+        <field name="model">library.member</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="filter_inactive"
+                        string="Inactive"
+                        domain="[('active','=',True)]"/>
+                <filter name="filter_active"
+                        string="Active"
+                        domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
 </odoo>
 
-<!--<group>-->
-<!--                            <field name="check_button_info"/>-->
-<!--                            <field name="home_address_member"-->
-<!--                                   attrs="{'invisible':[('check_button_info','=',False)]}"/>-->
-<!--                            <field name="mobil_phone"-->
-<!--                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>-->
-<!--                            <field name="home_phone"-->
-<!--                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>-->
-<!--                            <field name="email"-->
-<!--                                   attrs="{'invisible':[('check_button_info', '=', False)]}"/>-->
-<!--</group>-->
-<!--                        <group>-->
-<!--                            <field name="check_button_job"/>-->
-<!--                            <field name="job_member"-->
-<!--                                   attrs="{'invisible':[('check_button_job','=',False)]}"/>-->
-<!--                            <field name="job_phone"-->
-<!--                                   attrs="{'invisible':[('check_button_job', '=', False)]}"/>-->
-<!--                        </group>-->
-<!--                        <group>-->
-                            <!--<field name="check_button_book"/>
-                            <field name="name"
-                                    attrs="{'invisible':[('check_button_book','=',False)]}"/>-->
-<!--                            <field name="check_button_book"/>-->
-<!--                            <field name="date_take_book"-->
-<!--                                   attrs="{'invisible':[('check_button_book','=',False)]}"/>-->
-<!--                            <field name="date_return"-->
-<!--                                   attrs="{'invisible':[('check_button_book', '=', False)]}"/>-->
-<!--                        </group>-->

@@ -196,6 +196,21 @@ class Book(models.Model):
                 year = 'Год издания не известен'
             book.add_info = f'{author} - {name_book} ({year})'
 
+    # @api.depends('author_ids.name')
+    # def _compute_name_author(self):
+    #     for book in self:
+    #         name_book = book.name
+    #         author_names = book.author_ids.mapped('name')
+    #         # todo : еще одна переменная с именем автор в которую нужно
+    #         #  получить строку с именами авторов из переменнной author_names
+    #         # в дебаге или принтом смотреть что туда прихолит (значения)
+    #
+    #         if book.date_published:
+    #             year = book.date_published
+    #         else:
+    #             year = 'Год издания не известен'
+    #         book.add_info = f'{author} - {name_book} ({year})'
+
     date_start_read = fields.Date(string='Начало чтения')
     date_finish_read = fields.Date(string='Окончание чтения')
 

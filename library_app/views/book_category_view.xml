@@ -29,8 +29,6 @@
         <field name="model">library.book.category</field>
         <field name="arch" type="xml">
             <search>
-				<filter name="author_ids"
-                       string="Автор/Авторы"/>
 				<filter name="category_id"
                         string="Жанр книги"/>
 			</search>

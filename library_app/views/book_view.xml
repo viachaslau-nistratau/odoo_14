@@ -83,33 +83,37 @@
 		</field>
     </record>
     <!-- добавление поиска-->
-    <record id="view_search_book" model="ir.ui.view">
-		<field name="name">Book Filters</field>
-		<field name="model">library.book</field>
-		<field name="arch" type="xml">
-			<search>
-				<filter name="author_ids"
-                       string="Автор/Авторы"/>
-				<filter name="category_id"
-					    string="Жанр книги"/>
-			</search>
-		</field>
-    </record>
-</odoo>
 
-            <!--<separator/>
-                <field name="want_reed_book" string="Хочу прочитать"
-                            domain="[('status_book', '=', 'wanted')]"/>
-                <field name="reading_book" string="Читаю"
-                            domain="[('status_book', '=', 'in_the_process"/>
-                <field name="book_already_read" string="Прочитал"
-                            domain="[('status_book', '=', 'done')]"/>
-             <separator/>-->
-
-                <!--<field name="publisher_id" />
+    <record id="view_search_author" model="ir.ui.view">
+        <field name="name">Author Filters</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="author_ids" />
                 <filter name="filter_inactive"
                         string="Inactive"
                         domain="[('active','=',True)]" />
                 <filter name="filter_active"
                         string="Active"
-                        domain="[('active','=',False)]" />-->
+                        domain="[('active','=',False)]" />
+			</search>
+        </field>
+    </record>
+
+<!--    <record id="view_search_book" model="ir.ui.view">-->
+<!--		<field name="name">Book Filters</field>-->
+<!--		<field name="model">library.book</field>-->
+<!--		<field name="arch" type="xml">-->
+<!--			<search>-->
+<!--                <field name="name"/>-->
+<!--                <filter name="filter_inactive"-->
+<!--                        string="Inactive"-->
+<!--                        domain="[('active','=',True)]"/>-->
+<!--                <filter name="filter_active"-->
+<!--                        string="Active"-->
+<!--                        domain="[('active','=',False)]"/>-->
+<!--			</search>-->
+<!--		</field>-->
+<!--    </record>-->
+
+</odoo>
