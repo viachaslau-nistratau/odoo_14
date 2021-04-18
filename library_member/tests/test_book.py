@@ -10,6 +10,6 @@ class TestBook(TransactionCase):
         book = self.env['library.book']
         book = book.create({
             'name': 'The Pythons: Autobiography by the Pythons',
-            'isbn': '0312311443',
+            # 'isbn': '0312311443',
         })
         self.assertTrue(book.__check_isbn)

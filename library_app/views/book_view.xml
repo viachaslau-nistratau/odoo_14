@@ -45,7 +45,8 @@
                             <field name="count_page"/>
                             <!--реализация вызова инфы из поля add_info (видимое/невидимое)-->
                             <field name="check_button_notes"/>
-                            <field name="notes" attrs="{'invisible':[('check_button_notes','=',False)]}"/>
+                            <field name="notes"
+                                   attrs="{'invisible':[('check_button_notes','=',False)]}"/>
 <!--                            <field name="status_book"/>-->
                             <field name="date_start_read"/>
                             <field name="date_finish_read"/>
@@ -59,6 +60,14 @@
                             <field name="image"
                                    widget="image"/>
                         </group>
+                        <notebook>
+                            <page name="info_member_take_book"
+                                  string="Информация о пользователе, взявшем книгу">
+                                <field name="member_book_id"
+                                       widget="one2many_tags"
+                                />
+                            </page>
+                        </notebook>
                     </group>
                 </sheet>
             </form>
@@ -84,36 +93,23 @@
     </record>
     <!-- добавление поиска-->
 
-    <record id="view_search_author" model="ir.ui.view">
-        <field name="name">Author Filters</field>
+    <record id="view_search_author_name_book" model="ir.ui.view">
+        <field name="name">Search Filters</field>
         <field name="model">library.book</field>
+        <field name="type">search</field>
         <field name="arch" type="xml">
             <search>
-                <field name="author_ids" />
+                <field name="author_ids"/>
+                <field name="name"/>
+                <field name="category_id"/>
                 <filter name="filter_inactive"
                         string="Inactive"
-                        domain="[('active','=',True)]" />
+                        domain="[('active','=',True)]"/>
                 <filter name="filter_active"
                         string="Active"
-                        domain="[('active','=',False)]" />
-			</search>
+                        domain="[('active','=',False)]"/>
+            </search>
         </field>
     </record>
-
-<!--    <record id="view_search_book" model="ir.ui.view">-->
-<!--		<field name="name">Book Filters</field>-->
-<!--		<field name="model">library.book</field>-->
-<!--		<field name="arch" type="xml">-->
-<!--			<search>-->
-<!--                <field name="name"/>-->
-<!--                <filter name="filter_inactive"-->
-<!--                        string="Inactive"-->
-<!--                        domain="[('active','=',True)]"/>-->
-<!--                <filter name="filter_active"-->
-<!--                        string="Active"-->
-<!--                        domain="[('active','=',False)]"/>-->
-<!--			</search>-->
-<!--		</field>-->
-<!--    </record>-->
 
 </odoo>

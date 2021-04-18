@@ -67,26 +67,15 @@
 
                             <page name="info_about_borrowed_book"
                                   string="Информация о взятых в пользование книгах">
-                                <group string="Книга № 1">
-<!--                                    <header>-->
-<!--                                        <button name="date_take_book_in_library"-->
-<!--                                                type="object"-->
-<!--                                                string="Дата получения книги"-->
-<!--                                                class="btn-primary"-->
-<!--                                        />-->
-<!--                                        <button name="date_return_book"-->
-<!--                                                type="object"-->
-<!--                                                string="Дата возврата книги"-->
-<!--                                                class="btn-primary"-->
-<!--                                        />-->
-<!--                                    </header>-->
+                                <form>
                                     <group>
-                                        <field name="name_book_1"/>
-                                        <field name="date_take_book"/>
-                                        <field name="date_return"/>
-                                        <field name="alarm_date"/>
+                                        <field name="name_book"/>
+                                        <field name="member_book_ids"/>
+                                            <!--<field name="date_take_book"/>-->
+                                            <!--<field name="date_return"/>-->
+                                            <!--<field name="alarm_date"/>-->
                                     </group>
-                                </group>
+                                </form>
                             </page>
                         </notebook>
                     <!--</group>-->

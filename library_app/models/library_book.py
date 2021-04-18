@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
+import re
 
 BOOK_STATUS_WANTED = 'wanted'
 BOOK_STATUS_IN_PROGRESS = 'in_the_process'
@@ -35,8 +36,8 @@ class Book(models.Model):
 
     name = fields.Char(
         string='Название книги',
-        requered=True,
-        size=25,)
+        size=35,)
+    # requered = True,
     """
     дополнительные атрибуты - default=None, index=True, help='Book cover title', 
     readonly=False, required=True, translate=False,
@@ -46,7 +47,7 @@ class Book(models.Model):
     # Char (string) - это одна строка текста.
     # Единственный ожидаемый позиционный аргумент: метка строкового поля
 
-    isbn = fields.Char('ISBN')
+    isbn = fields.Char(string='ISBN', required=True)
 
     # Selection (selection, string) - это раскрывающийся список выбора.
     # Выбор позиционных аргументов - это список кортежей [('value', 'Title'),].
@@ -178,8 +179,18 @@ class Book(models.Model):
     # shot_information = fields.Selection([('one', 'to_push'),
     #                                      ('two', 'squeeze_out'), ],
     #                                     'Примечание')
+    info_member_take_book = fields.Boolean(
+        string='Информация о пользователе, взявшем книгу')
+    member_book_id = fields.Many2one(comodel_name='library.member', string='ФИО')
 
     date_published = fields.Char(string='Год издания', size=4,)
+
+    # def upper_register(self):
+    #     """
+    #
+    #     """
+    #     for book in self:
+    #         str(book.name).upper() if book.name else False
 
     @api.depends('author_ids.name')
     def _compute_name_author(self):
@@ -201,15 +212,19 @@ class Book(models.Model):
     #     for book in self:
     #         name_book = book.name
     #         author_names = book.author_ids.mapped('name')
+
+    def some_name_author(self):
+        """
+        модуль ввода нескольких авторов
+        """
+        for book in self:
+             name_book = book.name
+             author_names = book.author_ids.mapped('name')
+
+
     #         # todo : еще одна переменная с именем автор в которую нужно
     #         #  получить строку с именами авторов из переменнной author_names
-    #         # в дебаге или принтом смотреть что туда прихолит (значения)
-    #
-    #         if book.date_published:
-    #             year = book.date_published
-    #         else:
-    #             year = 'Год издания не известен'
-    #         book.add_info = f'{author} - {name_book} ({year})'
+    #         # в дебаге или принтом смотреть что туда приходит (значения)
 
     date_start_read = fields.Date(string='Начало чтения')
     date_finish_read = fields.Date(string='Окончание чтения')
@@ -245,10 +260,10 @@ class Book(models.Model):
         """
         for book in self:
             if not book.isbn:
-                raise ValidationError('Please provide an ISBN for %s'
+                raise ValidationError('Пожалуйста укажите ISBN для %s'
                                       % book.name)
             if book.isbn and not book._check_isbn():
-                raise ValidationError('%s is an invalid ISBN' % book.isbn)
+                raise ValidationError('%s это неправильный ISBN' % book.isbn)
         return True
 
     def _check_isbn(self):
@@ -264,6 +279,40 @@ class Book(models.Model):
             # check = 10 - remain if remain != 0 else 0
             check = 10 - remain if remain != 0 else 0
         return digits[-1] == check
+
+    def compliance_check_isbn(self):
+        """
+        проверка соответствия введенного ISBN - шаблону,
+        с использованием регулярных выражений
+        """
+        for book in self:
+            if book.isbn:
+                for book.isbn in self:
+                    if len(book.isbn) == 13:
+                        # формат ISBN (примерный) 1-111-11111-1
+                        pattern = r'\b(\d)([-]{1})(\d{3})([-]{1})(\d{5})([-]{1})(\d)'
+                        result = re.findall(pattern, book.isbn)
+                        """
+                        в переменной result у нас кортеж символов в списке,
+                        ждя его преобразования в строку - следующая команда
+                        """
+                        isbn_example = ''.join(map(''.join, result))
+                        if isbn_example == book.isbn:
+                            raise ValidationError('%s это правильный ISBN' % book.isbn)
+                        else:
+                            raise ValidationError('%s это неправильный ISBN' % book.isbn)
+                    elif len(book.isbn) == 17:
+                        # формат ISBN (примерный) 111-1-11111-111-1
+                        pattern = r'\b(\d{3})([-]{1})(\d)([-]{1})(\d{5})([-]{1})(\d{3})([-]{1})(\d)'
+                        result = re.findall(pattern, book.isbn)
+                        isbn_example = ''.join(map(''.join, result))
+                        if isbn_example == book.isbn:
+                            raise ValidationError('%s это правильный ISBN' % book.isbn)
+                        else:
+                            raise ValidationError('%s это неправильный ISBN' % book.isbn)
+                    else:
+                        raise ValidationError('%s введен неправильный формат ISBN' % book.isbn)
+                return True
 
     # @ api.depends (fld1, ...) используется для вычисляемых функций поля,
     # чтобы определить, при каких изменениях (повторное) вычисление должно
@@ -315,11 +364,11 @@ class Book(models.Model):
     # при изменении любого из них и вызывает исключение, если условие не
     # выполняется. предотвращение вставки неправильных номеров ISBN.
 
-    @api.constrains('isbn')
-    def _constrain_isbn_title(self):
-        for book in self:
-            if book.isbn and not book._check_isbn():
-                raise ValidationError('%s is an invalid ISBN' % book.isbn)
+    # @api.constrains('isbn')
+    # def _constrain_isbn_title(self):
+    #     for book in self:
+    #         if book.isbn and not book._check_isbn():
+    #             raise ValidationError('%s is an invalid ISBN' % book.isbn)
 
             # жанр книги
             # book_genre = fields.Selection(

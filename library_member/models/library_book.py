@@ -16,8 +16,6 @@ class Book(models.Model):
     # могут иметь 10-значный ISBN. расширим метод _check_isbn () также на
     # проверку этих случаев.
 
-    # разобраться почему ОДОО14 ругается на декоратор @api.multi
-    # @api.multi
     def __check__isbn(self):
         self.ensure_one()
         digits = [int(x) for x in self.isbn if x.isdigit()]

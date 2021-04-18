@@ -29,8 +29,15 @@
         <field name="model">library.book.category</field>
         <field name="arch" type="xml">
             <search>
-				<filter name="category_id"
-                        string="Жанр книги"/>
+				<field name="name"/>
+<!--                <filter name="filter_inactive"-->
+<!--                        string="Inactive"-->
+<!--                        domain="[('active', '=', True)]"-->
+<!--                />-->
+<!--                <filter name="filter_active"-->
+<!--                        string="Active"-->
+<!--                        domain="[('active', '=', False])"-->
+<!--                />-->
 			</search>
         </field>
     </record>

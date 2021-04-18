@@ -16,3 +16,5 @@ class Partner(models.Model):
     book_ids = fields.Many2many(
         'library.book', string='Authored Books'
     )
+
+    # book_author_ids = fields.Many2many('library.book', string='Authors')

@@ -18,10 +18,10 @@ class Member(models.Model):
     user_image = fields.Binary(string='Фотография пользователя библиотеки')
 
     # фамилия, имя, отчество
-    # family_name_surname = fields.Char(
-    #     string='ФИО',
-    #     requered=True,
-    #     size=40, )
+    name = fields.Char(
+        string='ФИО',
+        size=40, )
+    # requered = True,
 
     card_number = fields.Char(string='Номер абонемента пользователя',
                               compute='number_card_member',
@@ -35,7 +35,8 @@ class Member(models.Model):
         string='Дата регистрации в библиотеке')
     date_finish_library = fields.Date(
         string='Дата окончания пользования библиотекой')
-    count_book = fields.Integer(string='Количество книг на руках', size=2)
+
+    count_book = fields.Integer(string='Количество книг на руках')
 
     # Блок персональной информации
     personal_info = fields.Boolean(string='Персональная информация')
@@ -51,7 +52,10 @@ class Member(models.Model):
     # Блок информации о взятых в библиотеке книгах
     info_about_borrowed_book = fields.Boolean(
         string='Информация о взятых в пользование книгах')
-    name_book_1 = fields.Char(string='Название книги')
+    name_book = fields.Char(string='Книги',
+                            translate=True, required=True)
+    member_book_ids = fields.One2many('library.book', 'member_book_id', string='')
+
     # info_about_book = fields.Char(string='Информация о взятых в пользование книгах')
     # name = fields.One2many(comodel_name='library.book',
     #                        string='Название книги', )
