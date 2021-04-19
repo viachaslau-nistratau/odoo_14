@@ -36,7 +36,8 @@ class Book(models.Model):
 
     name = fields.Char(
         string='Название книги',
-        size=35,)
+        size=35,
+    )
     # requered = True,
     """
     дополнительные атрибуты - default=None, index=True, help='Book cover title', 
@@ -47,7 +48,9 @@ class Book(models.Model):
     # Char (string) - это одна строка текста.
     # Единственный ожидаемый позиционный аргумент: метка строкового поля
 
-    isbn = fields.Char(string='ISBN', required=True)
+    isbn = fields.Char(
+        string='ISBN',
+    )
 
     # Selection (selection, string) - это раскрывающийся список выбора.
     # Выбор позиционных аргументов - это список кортежей [('value', 'Title'),].
@@ -66,29 +69,20 @@ class Book(models.Model):
 
     # Html хранится как текстовое поле, но имеет специфическую обработку
     # пользователя интерфейса для представления содержимого HTML
-
-    descr = fields.Html('Description')
-
+    # descr = fields.Html('Description')
     # Numeric fields
     # Integer (string) просто ожидает строковый аргумент для заголовка поля.
-
-    copies = fields.Integer(default=1)
-
+    # copies = fields.Integer(default=1)
     # Float (string, digits) имеет второй необязательный аргумент - цифры,
     # как (x, y) кортеж с точностью поля. x - общее количество цифр; из них
     # y десятичные цифры.
-
-    avg_rating = fields.Float('Average Rating', (3, 2))
-
+    # avg_rating = fields.Float('Average Rating', (3, 2))
     # Monetary (string, currency_field) похоже на поле с плавающей запятой,
     # но имеет особую обработку валюты. Используется второй аргумент
     # currency_field для установки поля, в котором хранится используемая
     # валюта. По умолчанию ожидается поле currency_id.
-
-    price = fields.Monetary('Price', 'currency_id')
-
-    currency_id = fields.Many2one('res.currency')
-
+    # price = fields.Monetary('Price', 'currency_id')
+    # currency_id = fields.Many2one('res.currency')
     # Date and time fields
     # Date (string) и Datetime(string) ожидают только текст строки как
     # позиционный аргумент.
@@ -109,14 +103,18 @@ class Book(models.Model):
     # только строку аргумент. может быть обработано кодом Python с
     # использованием строк в кодировке base64.
 
-    image = fields.Binary(string='Обложка книги')
+    image = fields.Binary(
+        string='Обложка книги',
+    )
 
     # Relation fields
     # поле publisher_id представляет издателя книги и является
     # ссылкой на запись в партнерской модели
 
-    publisher_id = fields.Many2one(comodel_name='res.partner',
-                                   string='Издательство')
+    publisher_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Издательство',
+    )
 
     # связь "многие ко многим" между книгами и авторами: у каждой книги
     # может быть много авторов, и у каждого автора может быть много книг
@@ -125,8 +123,11 @@ class Book(models.Model):
     # Date (string) и Datetime(string) ожидают только текст строки как
     # озиционный аргумент.
 
-    author_ids = fields.Many2many(comodel_name='res.partner',
-                                  string='Автор/Авторы')
+    author_ids = fields.One2many(
+        comodel_name='res.partner',
+        inverse_name='book_ids',
+        string='Автор',
+    )
 
     #  чтобы страна издателя была в книжной форме.
     # дя этого используем вычисляемое поле на основе publisher_id,
@@ -142,16 +143,21 @@ class Book(models.Model):
         search='_search_publisher_country',
     )
 
-    category_id = fields.Many2many(comodel_name='library.book.category',
-                                   string='Жанр книги',)
+    category_id = fields.Many2many(
+        comodel_name='library.book.category',
+        string='Жанр книги',
+    )
 
-    add_info = fields.Char(string='Автор/Название книги/Год издания',
-                           compute='_compute_name_author',
-                           readonly=False,
-                           )
-                           # inverse='_set_name_author',)
+    add_info = fields.Char(
+        string='Автор/Название книги/Год издания',
+        compute='_compute_name_author',
+        readonly=False,
+    )
+        # inverse='_set_name_author',)
 
-    count_page = fields.Integer(string='Количество страниц')
+    count_page = fields.Integer(
+        string='Количество страниц',
+    )
 
     BOOK_STATUS = [
         (BOOK_STATUS_WANTED, 'Хочу прочитать'),
@@ -166,31 +172,29 @@ class Book(models.Model):
     )
 
     # checkbox (флажки) вызова дополнительной информации
-    check_button = fields.Boolean(string='Доп. информация')
+    check_button = fields.Boolean(
+        string='Доп. информация'
+    )
     # тесктовое поле не имеет размера
-    notes = fields.Text(string='Краткое содержание')
-    check_button_notes = fields.Boolean(string='Примечание')
+    notes = fields.Text(
+        string='Краткое содержание'
+    )
+    check_button_notes = fields.Boolean(
+        string='Примечание'
+    )
 
-    """
-    чем неудобен radiobutton (переключатель), после выбора переключателя
-    пользователь не может отменить выбор, чтобы восстановить исходное состояние
-    группы radiobutton 
-    """
-    # shot_information = fields.Selection([('one', 'to_push'),
-    #                                      ('two', 'squeeze_out'), ],
-    #                                     'Примечание')
     info_member_take_book = fields.Boolean(
-        string='Информация о пользователе, взявшем книгу')
-    member_book_id = fields.Many2one(comodel_name='library.member', string='ФИО')
+        string='Информация о пользователе, взявшем книгу'
+    )
+    member_book_id = fields.Many2one(
+        comodel_name='library.member',
+        string='ФИО',
+    )
 
-    date_published = fields.Char(string='Год издания', size=4,)
-
-    # def upper_register(self):
-    #     """
-    #
-    #     """
-    #     for book in self:
-    #         str(book.name).upper() if book.name else False
+    date_published = fields.Char(
+        string='Год издания',
+        size=4,
+    )
 
     @api.depends('author_ids.name')
     def _compute_name_author(self):
@@ -213,21 +217,25 @@ class Book(models.Model):
     #         name_book = book.name
     #         author_names = book.author_ids.mapped('name')
 
-    def some_name_author(self):
-        """
-        модуль ввода нескольких авторов
-        """
-        for book in self:
-             name_book = book.name
-             author_names = book.author_ids.mapped('name')
+    # def some_name_author(self):
+    #     """
+    #     модуль ввода нескольких авторов
+    #     """
+    #     for book in self:
+    #          name_book = book.name
+    #          author_names = book.author_ids.mapped('name')
 
 
     #         # todo : еще одна переменная с именем автор в которую нужно
     #         #  получить строку с именами авторов из переменнной author_names
     #         # в дебаге или принтом смотреть что туда приходит (значения)
 
-    date_start_read = fields.Date(string='Начало чтения')
-    date_finish_read = fields.Date(string='Окончание чтения')
+    date_start_read = fields.Date(
+        string='Начало чтения',
+    )
+    date_finish_read = fields.Date(
+        string='Окончание чтения',
+    )
 
     def start_read_book(self):
         """
@@ -251,8 +259,13 @@ class Book(models.Model):
         })
         return True
 
-    # Text многострочный текст. Единственный позиционный аргумент - это строка,
-    # метка поля
+    # def double_check_book(self):
+    #     """
+    #     модуль проверки на дублирование названия книги
+    #     при создании новой записи в библиотеке
+    #     """
+    #     for book in self:
+    #         if book.name ==
 
     def button_check_isbn(self):
         """
@@ -263,7 +276,7 @@ class Book(models.Model):
                 raise ValidationError('Пожалуйста укажите ISBN для %s'
                                       % book.name)
             if book.isbn and not book._check_isbn():
-                raise ValidationError('%s это неправильный ISBN' % book.isbn)
+                raise ValidationError(f'{book.isbn} это неправильный ISBN')
         return True
 
     def _check_isbn(self):
@@ -280,39 +293,21 @@ class Book(models.Model):
             check = 10 - remain if remain != 0 else 0
         return digits[-1] == check
 
-    def compliance_check_isbn(self):
+    def compliance_check_isbn(self, vals):
         """
         проверка соответствия введенного ISBN - шаблону,
         с использованием регулярных выражений
         """
-        for book in self:
-            if book.isbn:
-                for book.isbn in self:
-                    if len(book.isbn) == 13:
-                        # формат ISBN (примерный) 1-111-11111-1
-                        pattern = r'\b(\d)([-]{1})(\d{3})([-]{1})(\d{5})([-]{1})(\d)'
-                        result = re.findall(pattern, book.isbn)
-                        """
-                        в переменной result у нас кортеж символов в списке,
-                        ждя его преобразования в строку - следующая команда
-                        """
-                        isbn_example = ''.join(map(''.join, result))
-                        if isbn_example == book.isbn:
-                            raise ValidationError('%s это правильный ISBN' % book.isbn)
-                        else:
-                            raise ValidationError('%s это неправильный ISBN' % book.isbn)
-                    elif len(book.isbn) == 17:
-                        # формат ISBN (примерный) 111-1-11111-111-1
-                        pattern = r'\b(\d{3})([-]{1})(\d)([-]{1})(\d{5})([-]{1})(\d{3})([-]{1})(\d)'
-                        result = re.findall(pattern, book.isbn)
-                        isbn_example = ''.join(map(''.join, result))
-                        if isbn_example == book.isbn:
-                            raise ValidationError('%s это правильный ISBN' % book.isbn)
-                        else:
-                            raise ValidationError('%s это неправильный ISBN' % book.isbn)
-                    else:
-                        raise ValidationError('%s введен неправильный формат ISBN' % book.isbn)
-                return True
+        if 'isbn' in vals:
+            isbn_value = vals.get('isbn', '')
+            # формат ISBN (примерный) 1-111-11111-1
+            pattern_one = r'\b(\d)([-]{1})(\d{3})([-]{1})(\d{5})([-]{1})(\d)'
+            result_one = re.match(pattern_one, isbn_value)
+            # формат ISBN (примерный) 111-1-11111-111-1
+            pattern_two = r'\b(\d{3})([-]{1})(\d)([-]{1})(\d{5})([-]{1})(\d{3})([-]{1})(\d)'
+            result_two = re.match(pattern_two, isbn_value)
+            if not result_one or not result_two:
+                raise ValidationError(f'{isbn_value} это неправильный ISBN')
 
     # @ api.depends (fld1, ...) используется для вычисляемых функций поля,
     # чтобы определить, при каких изменениях (повторное) вычисление должно
@@ -364,77 +359,10 @@ class Book(models.Model):
     # при изменении любого из них и вызывает исключение, если условие не
     # выполняется. предотвращение вставки неправильных номеров ISBN.
 
-    # @api.constrains('isbn')
-    # def _constrain_isbn_title(self):
-    #     for book in self:
-    #         if book.isbn and not book._check_isbn():
-    #             raise ValidationError('%s is an invalid ISBN' % book.isbn)
-
-            # жанр книги
-            # book_genre = fields.Selection(
-            #     [('adventures', 'приключения'),
-            #      ('fiction', 'фантастика'),
-            #      ('history', 'история'),
-            #      ('prose', 'проза'),
-            #      ('fantasy', 'фэнтези'),
-            #      ('scientific_literature', 'научная литература'), ],
-            #     'Жанр',
-            # )
-
-            # date_published = fields.Date('Год издания')
-
-            # @api.depends('author_ids.name')
-            # def _compute_name_author(self):
-            #     """
-            #     функция конкатенции 3-х полей - автора, названия книги
-            #     и даты публикации
-            #     """
-            #     for book in self:
-            #         name_book = book.name
-            #         author = book.author_ids.name
-            #         if book.date_published:
-            #             year = book.date_published.strftime("%Y")
-            #         else:
-            #             year = 'Год издания не известен'
-            #         book.add_info = f'{author} - {name_book} ({year})'
-
-            # @api.onchange(check_button)
-            # def _all_checked(self):
-            #     """
-            #     функция реализации чекбокса (вызов скрытого поля)
-            #     """
-            #     if self.check_button:
-            #         self.check_button = False
-            #     else:
-            #         self.check_button = True
-
-            # def _set_name_author(self):
-            #     """
-            #     функция позволяющая сделать поле add_info редактируемым
-            #     """
-            #     for book in self:
-            #         if not book.add_info:
-            #             continue
-            #         with open(book._compute_name_author) as f:
-            #             f.write(book.add_info)
-
-            # date_published = fields.Date(string='Год издания',
-            #                              compute='_compute_change_date',
-            #                              readonly=False,)
-            #                              # inverse='_set_change_date',)
-            #
-            # @api.depends('date_published')
-            # def _compute_change_date(self):
-            #     """
-            #     функция переводящая формат даты ДД.ММ.ГГ просто в год
-            #     """
-            #     for book in self:
-            #         if book.date_published:
-            #             book.date_published = book.date_published.strftime("%Y")
-
-            # def _set_change_date(self):
-            #     for book in self:
-            #         if not book.date_published:
-            #             continue
-            #         with open(book._compute_change_date) as f:
-            #             f.write(book.date_published)
+    def write(self, vals):
+        """
+        модуль запуска автоматической проверки isbn при сохранении записи
+        """
+        self.compliance_check_isbn(vals)
+        res = super(Book, self).write(vals)
+        return res

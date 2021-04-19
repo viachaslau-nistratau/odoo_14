@@ -5,6 +5,7 @@ class Partner(models.Model):
     """
     partner model
     """
+    _name = 'res.partner'
     _inherit = 'res.partner'
 
     published_book_ids = fields.One2many(
@@ -13,8 +14,7 @@ class Partner(models.Model):
         string='Published Books'
     )
 
-    book_ids = fields.Many2many(
-        'library.book', string='Authored Books'
+    book_ids = fields.Many2one(
+        'library.book',
+        string='Authored Books',
     )
-
-    # book_author_ids = fields.Many2many('library.book', string='Authors')

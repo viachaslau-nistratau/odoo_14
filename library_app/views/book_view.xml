@@ -96,20 +96,36 @@
     <record id="view_search_author_name_book" model="ir.ui.view">
         <field name="name">Search Filters</field>
         <field name="model">library.book</field>
-        <field name="type">search</field>
         <field name="arch" type="xml">
-            <search>
+            <search string="Поиск">
                 <field name="author_ids"/>
                 <field name="name"/>
                 <field name="category_id"/>
                 <filter name="filter_inactive"
-                        string="Inactive"
-                        domain="[('active','=',True)]"/>
-                <filter name="filter_active"
                         string="Active"
-                        domain="[('active','=',False)]"/>
+                        domain="[('active','=',True)]"
+                />
+                <filter name="filter_active"
+                        string="Inactive"
+                        domain="[('active','=',False)]"
+                />
+                <group expand="0" string="Group By">
+<!--                    <filter name="author_ids"-->
+<!--                            string="Автор"-->
+<!--                            context="{'group_by': 'author_ids'}"-->
+<!--                    />-->
+                    <filter name="filter_inactive"
+                            string="Active"
+                            domain="[('active','=',True)]"
+                    />
+                    <filter name="filter_active"
+                            string="Inactive"
+                            domain="[('active','=',False)]"
+                    />
+                </group>
             </search>
         </field>
     </record>
 
 </odoo>
+

@@ -116,10 +116,10 @@
             <search>
                 <field name="name"/>
                 <filter name="filter_inactive"
-                        string="Inactive"
+                        string="Active"
                         domain="[('active','=',True)]"/>
                 <filter name="filter_active"
-                        string="Active"
+                        string="Inactive"
                         domain="[('active','=',False)]"/>
             </search>
         </field>

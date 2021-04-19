@@ -1,0 +1,281 @@
+"""
+чем неудобен radiobutton (переключатель), после выбора переключателя
+пользователь не может отменить выбор, чтобы восстановить исходное состояние
+группы radiobutton
+"""
+shot_information = fields.Selection([('one', 'to_push'),
+                                     ('two', 'squeeze_out'), ],
+                                    'Примечание',)
+
+def upper_register(self):
+   """
+   функция перевода в верхний регистр названия книги
+   """
+     for book in self:
+         str(book.name).upper() if book.name else False
+
+ def compliance_check_isbn(self):
+        """
+        проверка соответствия введенного ISBN - шаблону,
+        с использованием регулярных выражений
+        """
+        for book in self:
+            if book.isbn:
+                    if len(book.isbn) == 13:
+                        # формат ISBN (примерный) 1-111-11111-1
+                        pattern = r'\b(\d)([-]{1})(\d{3})([-]{1})(\d{5})([-]{1})(\d)'
+                        result = re.findall(pattern, book.isbn)
+                        """
+                        в переменной result у нас кортеж символов в списке,
+                        ждя его преобразования в строку - следующая команда
+                        """
+                        isbn_example = ''.join(map(''.join, result))
+                        if isbn_example != book.isbn:
+                            raise ValidationError(f'{book.isbn} это неправильный ISBN')
+                    elif len(book.isbn) == 17:
+                        # формат ISBN (примерный) 111-1-11111-111-1
+                        pattern = r'\b(\d{3})([-]{1})(\d)([-]{1})(\d{5})([-]{1})(\d{3})([-]{1})(\d)'
+                        result = re.findall(pattern, book.isbn)
+                        isbn_example = ''.join(map(''.join, result))
+                        if isbn_example != book.isbn:
+                            raise ValidationError(f'{book.isbn} это неправильный ISBN')
+                    else:
+                        raise ValidationError(f'{book.isbn} введен неправильный ISBN')
+
+ add_info = fields.Char(string='Автор/Название книги/Год издания',
+                           compute='_compute_name_author',
+                           readonly=False,
+                           inverse='_set_name_author',
+                           )
+
+            жанр книги
+            book_genre = fields.Selection(
+                [('adventures', 'приключения'),
+                 ('fiction', 'фантастика'),
+                 ('history', 'история'),
+                 ('prose', 'проза'),
+                 ('fantasy', 'фэнтези'),
+                 ('scientific_literature', 'научная литература'), ],
+                'Жанр',
+            )
+
+            date_published = fields.Date('Год издания')
+
+            @api.depends('author_ids.name')
+            def _compute_name_author(self):
+                """
+                функция конкатенции 3-х полей - автора, названия книги
+                и даты публикации
+                """
+                for book in self:
+                    name_book = book.name
+                    author = book.author_ids.name
+                    if book.date_published:
+                        year = book.date_published.strftime("%Y")
+                    else:
+                        year = 'Год издания не известен'
+                    book.add_info = f'{author} - {name_book} ({year})'
+
+            @api.onchange(check_button)
+            def _all_checked(self):
+                """
+                функция реализации чекбокса (вызов скрытого поля)
+                """
+                if self.check_button:
+                    self.check_button = False
+                else:
+                    self.check_button = True
+
+            def _set_name_author(self):
+                """
+                функция позволяющая сделать поле add_info редактируемым
+                """
+                for book in self:
+                    if not book.add_info:
+                        continue
+                    with open(book._compute_name_author) as f:
+                        f.write(book.add_info)
+
+            date_published = fields.Date(string='Год издания',
+                                         compute='_compute_change_date',
+                                         readonly=False,)
+                                         # inverse='_set_change_date',)
+
+            @api.depends('date_published')
+            def _compute_change_date(self):
+                """
+                функция переводящая формат даты ДД.ММ.ГГ просто в год
+                """
+                for book in self:
+                    if book.date_published:
+                        book.date_published = book.date_published.strftime("%Y")
+
+            def _set_change_date(self):
+                for book in self:
+                    if not book.date_published:
+                        continue
+                    with open(book._compute_change_date) as f:
+                        f.write(book.date_published)
+
+     def date_take_book_in_library(self):
+        """
+        дата получения книги пользователем
+        """
+        self.write({
+            'date_take_book': fields.Date.today(),
+        })
+        return True
+
+    def date_return_book(self):
+        """
+        дата, когда необходимо вернуть книгу в библиотеку
+        """
+        self.write({
+            'date_return': 'date_take_book' + timedelta(days=1),
+        })
+        return True
+
+    'date_return': fields.Date.today() + timedelta(days=1),
+
+        def _compute_date_return_book(self):
+        """
+        дата, когда необходимо вернуть книгу в библиотеку
+        """
+        for member in self:
+            if member.date_take_book:
+                self.write({
+                    'date_return': fields.Date.today() + timedelta(days=1),
+                })
+                return True
+            else:
+                pass
+
+    library_security.xml
+    <data noupdate="1">
+		<recorf id="author_user_rule" model="ir.rule">
+			<field name="name">Library Author User Access</field>
+			<field name="model_id" ref="model_book_author"/>
+			<field name="domain_force">[('active','=',True)]</field>
+			<field name="groups" eval="[(4,ref('library_group_user'))]"/>
+		</recorf>
+    </data>
+
+    ir.model.access.csv
+    access_book_author_user,book_author_user,model_book_author,library_group_user,1,0,0,0
+access_book_author_manager,book_author_manager,model_book_author,library_group_manager,1,1,1,1
+
+view.author.xml
+
+<?xml version="1.0"?>
+<odoo>
+    <record id="books_authors_form_view" model="ir.ui.view">
+        <field name="name">Book Author</field>
+        <field name="model">book.author</field>
+        <field name="arch" type="xml">
+            <form string="Автор книг">
+                <group>
+                    <field name="family_name"/>
+                    <field name="book_ids"/>
+                </group>
+             </form>
+        </field>
+    </record>
+
+    <record  id="books_authors_view_tree" model="ir.ui.view">
+        <field name="Book Author List"/>
+        <field name="model">book.author</field>
+        <field name="arch" type="xml">
+            <tree string="Авторы книг">
+                <field name="family_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="books_authors_view_search" model="ir.ui.view">
+        <field name="name">Search Author</field>
+        <field name="model">book.author</field>
+        <field name="arch" type="xml">
+            <search string="поиск по автору">
+                <field name="family_name"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>
+
+book_author.py
+
+# -*- coding: utf-8 -*-
+from odoo import fields, models, api
+class BookAuthor(models.Model):
+    """
+    model book
+    """
+    _name = 'book.author'
+
+    # атрибут _name, определяющий идентификатор,
+    # который будет использоваться повсюду Odoo для обозначения этой модели
+
+    _description = 'Book Author'
+
+    book_ids = fields.Many2one(
+        comodel_name='library.book',
+        string='Authored Books',
+    )
+
+    family_name = fields.Char(
+        string='ФИО автора',
+        required=True,
+    )
+
+library_menu.xml
+
+       <record model="ir.actions.act_window" id="action_books_authors">
+        <field name="name">Book Author</field>
+        <field name="res_model">book.author</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="books_authors"
+              name="Авторы"
+              parent="menu_library"
+              action="action_books_authors"
+    />
+
+    book_view.py
+    <record id="view_search_author_name_book" model="ir.ui.view">
+        <field name="name">Search Filters</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <search string="Поиск">
+                <field name="author_ids"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <filter name="filter_inactive"
+                        string="Active"
+                        domain="[('active','=',True)]"
+                />
+                <filter name="filter_active"
+                        string="Inactive"
+                        domain="[('active','=',False)]"
+                />
+                <group expand="0" string="Group By">
+<!--                    <filter name="author_ids"-->
+<!--                            string="Автор"-->
+<!--                            context="{'group_by': 'author_ids'}"-->
+<!--                    />-->
+                    <filter name="filter_inactive"
+                            string="Active"
+                            domain="[('active','=',True)]"
+                    />
+                    <filter name="filter_active"
+                            string="Inactive"
+                            domain="[('active','=',False)]"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+

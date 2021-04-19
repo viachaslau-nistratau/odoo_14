@@ -3,6 +3,7 @@
     <record id="module_library_category" model="ir.module.category">
         <field name="name">Library</field>
     </record>
+
     <!-- Library User Group -->
     <record id="library_group_user" model="res.groups">
 		<field name="name">User</field>
@@ -26,7 +27,8 @@
 			<field name="domain_force">[('active','=',True)]</field>
 			<field name="groups" eval="[(4,ref('library_group_user'))]"/>
 		</record>
-    </data>
+	</data>
+
 </odoo>
 
 <!-- Правила записи - определение фильтров, ограничивающих,
