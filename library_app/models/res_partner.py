@@ -14,7 +14,8 @@ class Partner(models.Model):
         string='Published Books'
     )
 
-    book_ids = fields.Many2one(
+    book_ids = fields.One2many(
         'library.book',
+        'author_ids',
         string='Authored Books',
     )

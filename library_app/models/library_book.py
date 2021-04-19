@@ -123,12 +123,16 @@ class Book(models.Model):
     # Date (string) и Datetime(string) ожидают только текст строки как
     # озиционный аргумент.
 
-    author_ids = fields.One2many(
+    author_ids = fields.Many2one(
         comodel_name='res.partner',
-        inverse_name='book_ids',
         string='Автор',
     )
 
+    # author_ids = fields.One2many(
+    #     comodel_name='res.partner',
+    #     inverse_name='book_ids',
+    #     string='Автор',
+    # )
     #  чтобы страна издателя была в книжной форме.
     # дя этого используем вычисляемое поле на основе publisher_id,
     # значение которого будет принимать значение из поля country_id издателя.
@@ -309,6 +313,15 @@ class Book(models.Model):
             if not result_one or not result_two:
                 raise ValidationError(f'{isbn_value} это неправильный ISBN')
 
+    def upper_register(self, vals):
+        """
+        функция перевода в верхний регистр названия книги
+        """
+        if 'name' in vals:
+            name_value = vals.get('name', '')
+            value_name = name_value.upper()
+            vals['name'] = value_name
+
     # @ api.depends (fld1, ...) используется для вычисляемых функций поля,
     # чтобы определить, при каких изменениях (повторное) вычисление должно
     # запускаться. Он должен устанавливать значения в вычисленных полях,
@@ -362,7 +375,16 @@ class Book(models.Model):
     def write(self, vals):
         """
         модуль запуска автоматической проверки isbn при сохранении записи
+        перевода в верхний регистр названия книги
         """
         self.compliance_check_isbn(vals)
+
+        self.upper_register(vals)
         res = super(Book, self).write(vals)
         return res
+
+    # def write(self, vals):
+    #     self.upper_register(vals)
+    #     res = super(Book, self).write(vals)
+    #     return res
+
