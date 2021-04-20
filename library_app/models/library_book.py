@@ -129,8 +129,8 @@ class Book(models.Model):
     )
 
     # author_ids = fields.One2many(
-    #     comodel_name='res.partner',
-    #     inverse_name='book_ids',
+    #     'res.partner',
+    #     'book_id',
     #     string='Автор',
     # )
     #  чтобы страна издателя была в книжной форме.
@@ -313,14 +313,28 @@ class Book(models.Model):
             if not result_one or not result_two:
                 raise ValidationError(f'{isbn_value} это неправильный ISBN')
 
-    def upper_register(self, vals):
+    @staticmethod
+    def upper_register(vals):
         """
         функция перевода в верхний регистр названия книги
         """
         if 'name' in vals:
             name_value = vals.get('name', '')
-            value_name = name_value.upper()
-            vals['name'] = value_name
+            vals['name'] = name_value.upper()
+
+    @api.constrains('name', 'author_ids')
+    def finding_duplicate_book(self):
+        """
+        нахождение дубликата названия книги - сообщение об ошибке
+        """
+        for book in self:
+            is_dubl_book = self.env['library.book'].search_count([
+                ('name', '=', book.name),
+                ('author_ids', '=', book.author_ids.id),
+                ('id', '!=', book.id),
+            ])
+            if is_dubl_book:
+                raise ValidationError('Такая книга в библиотеке уже есть')
 
     # @ api.depends (fld1, ...) используется для вычисляемых функций поля,
     # чтобы определить, при каких изменениях (повторное) вычисление должно
@@ -372,6 +386,16 @@ class Book(models.Model):
     # при изменении любого из них и вызывает исключение, если условие не
     # выполняется. предотвращение вставки неправильных номеров ISBN.
 
+    @api.model
+    def create(self, vals):
+        """
+        сохранение названия в верхнем регистре при создании
+        новой записи
+        """
+        self.upper_register(vals)
+        res = super(Book, self).create(vals)
+        return res
+
     def write(self, vals):
         """
         модуль запуска автоматической проверки isbn при сохранении записи
@@ -380,8 +404,19 @@ class Book(models.Model):
         self.compliance_check_isbn(vals)
 
         self.upper_register(vals)
+
         res = super(Book, self).write(vals)
         return res
+
+    @api.onchange('name')
+    def onchange_book_name(self):
+        """
+        добавление кавычек к названию книги
+        """
+        for book in self:
+            if book.name:
+                name_book = book.name
+                book.name = '"' + name_book + '"'
 
     # def write(self, vals):
     #     self.upper_register(vals)
