@@ -5,7 +5,9 @@ from odoo import fields, models, api
 
 class Member(models.Model):
     """
-    пользователи библиотеки
+    пользователи библиотеки - создание новой модели library.member и расширение
+    (наследование) от mail.thread и mail.activity.mixin
+    + наследование с делегированием от модели res.partner
     """
     _name = 'library.member'
     _description = 'Library Member'
@@ -14,6 +16,18 @@ class Member(models.Model):
     # надо сделать так, чтобы класс унаследовал mail.thread
     # и mail.activity.mixin миксин классов
     _inherit = ['mail.thread', 'mail.activity.mixin']
+
+    partner_id = fields.Many2one(
+        'res.partner',
+        delegate=True,
+        ondelete='cascade',
+        required=True,
+    )
+
+    # При наследовании с делегированием модель library.member встраивает
+    # унаследованную Модель, res.partner, так что при создании новой
+    # записи пользователя связанный Партнер автоматически создается и указывается
+    # в поле partner_id.
 
     user_image = fields.Binary(
         string='Фотография пользователя библиотеки'
@@ -105,18 +119,6 @@ class Member(models.Model):
         compute='_alarm_date_return',
         readonly=False,
     )
-
-    partner_id = fields.Many2one(
-        'res.partner',
-        delegate=True,
-        ondelete='cascade',
-        required=True,
-    )
-
-    # При наследовании с делегированием модель library.member встраивает
-    # унаследованные Модель, res.partner, так что при создании новой
-    # записи Участника связанный Партнер автоматически создается и указывается
-    # в поле partner_id.
 
     @api.depends()
     def number_card_member(self):

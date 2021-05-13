@@ -3,7 +3,7 @@ from odoo import fields, models, api
 
 class Book(models.Model):
     """
-    model book
+    model book - наследование расширением родительской модели library.book
     """
     _inherit = 'library.book'
     is_available = fields.Boolean('Is Available?', readonly=False)

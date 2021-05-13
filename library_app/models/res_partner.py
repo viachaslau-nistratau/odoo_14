@@ -1,9 +1,12 @@
 from odoo import fields, models
+from odoo.exceptions import ValidationError
 
 
 class Partner(models.Model):
     """
-    partner model
+    partner model классическое наследование - создание новой модели из существующей
+    (res.partner), добавление новой информации к копии, но оставление исходной модели
+    без изменения
     """
     _name = 'res.partner'
     _inherit = 'res.partner'
@@ -18,8 +21,9 @@ class Partner(models.Model):
     #     'library.book',
     #     string='Authored Books',
     # )
+
     book_ids = fields.One2many(
-        'library.book',
-        'author_ids',
+        comodel_name='library.book',
+        inverse_name='author_ids',
         string='Authored Books',
     )

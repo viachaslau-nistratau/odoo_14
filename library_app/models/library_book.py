@@ -10,12 +10,12 @@ BOOK_STATUS_DONE = 'done'
 
 class Book(models.Model):
     """
-    model book
+    model book - оригинальная модель (родительская)
     """
     _name = 'library.book'
 
-    # атрибут _name, определяющий идентификатор,
-    # который будет использоваться повсюду Odoo для обозначения этой модели
+    # атрибут _name, определяющий идентификатор модели,
+    # который будет использоваться повсюду odoo для обозначения этой модели
 
     _description = 'Book'
 
@@ -200,11 +200,10 @@ class Book(models.Model):
         size=4,
     )
 
-    @api.depends('author_ids.name')
+    @api.depends('name', 'author_ids.name', 'date_published')
     def _compute_name_author(self):
         """
-        функция конкатенции 3-х полей - автора, названия книги и даты публикации
-        второй вариант когда дата - всего лишь год
+        функция конкатенации 3-х полей - автора, названия книги и даты публикации
         """
         for book in self:
             name_book = book.name
@@ -214,25 +213,6 @@ class Book(models.Model):
             else:
                 year = 'Год издания не известен'
             book.add_info = f'{author} - {name_book} ({year})'
-
-    # @api.depends('author_ids.name')
-    # def _compute_name_author(self):
-    #     for book in self:
-    #         name_book = book.name
-    #         author_names = book.author_ids.mapped('name')
-
-    # def some_name_author(self):
-    #     """
-    #     модуль ввода нескольких авторов
-    #     """
-    #     for book in self:
-    #          name_book = book.name
-    #          author_names = book.author_ids.mapped('name')
-
-
-    #         # todo : еще одна переменная с именем автор в которую нужно
-    #         #  получить строку с именами авторов из переменнной author_names
-    #         # в дебаге или принтом смотреть что туда приходит (значения)
 
     date_start_read = fields.Date(
         string='Начало чтения',
@@ -262,14 +242,6 @@ class Book(models.Model):
             'date_finish_read': fields.Date.today(),
         })
         return True
-
-    # def double_check_book(self):
-    #     """
-    #     модуль проверки на дублирование названия книги
-    #     при создании новой записи в библиотеке
-    #     """
-    #     for book in self:
-    #         if book.name ==
 
     def button_check_isbn(self):
         """
@@ -389,7 +361,7 @@ class Book(models.Model):
     @api.model
     def create(self, vals):
         """
-        сохранение названия в верхнем регистре при создании
+        модуль запуска перевода названия в верхний регистр при создании
         новой записи
         """
         self.upper_register(vals)
@@ -417,9 +389,3 @@ class Book(models.Model):
             if book.name:
                 name_book = book.name
                 book.name = '"' + name_book + '"'
-
-    # def write(self, vals):
-    #     self.upper_register(vals)
-    #     res = super(Book, self).write(vals)
-    #     return res
-
